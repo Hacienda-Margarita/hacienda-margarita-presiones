@@ -1,6 +1,6 @@
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hacienda Margarita | Presión Arterial</title>
 <style>
-:root{--gold:#d8aa25;--brown:#69483d;--cream:#f7f3eb;--green:#3f705a;--red:#a8241c;--ink:#2c2927}*{box-sizing:border-box}body{margin:0;background:var(--cream);font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:var(--ink)}header{background:#fff;border-bottom:4px solid var(--gold);text-align:center;padding:8px 14px}header img{width:min(430px,92vw)}header p{margin:2px 0 6px;color:#6c625d}main{max-width:860px;margin:20px auto;padding:0 14px}.nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.nav button{border:0;border-radius:10px;padding:12px 16px;font-weight:750;background:#e7e0d6;cursor:pointer}.nav .active{background:var(--brown);color:#fff}.panel{display:none}.panel.active{display:block}.card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 3px 16px #00000012;margin-bottom:16px}h1{font-size:1.35rem;margin:0 0 6px}h2{font-size:1.2rem;margin:0 0 16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}label{display:block;font-weight:700;margin:0 0 5px}input,select,textarea{width:100%;font:inherit;padding:12px;border:1px solid #bbb;border-radius:10px;background:#fff}textarea{min-height:75px}.primary,.secondary{border:0;border-radius:10px;padding:13px 18px;font-weight:800;cursor:pointer}.primary{background:var(--green);color:#fff}.secondary{background:var(--brown);color:#fff}.notice{padding:12px 14px;border-radius:10px;margin:14px 0}.ok{background:#e7f4ec;color:#235a40}.alert{background:#fde8e6;color:var(--red);font-weight:800}.info{background:#fff5d8;border-left:5px solid var(--gold)}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{padding:9px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}th{background:#f3eee7}.small{font-size:.88rem;color:#6d6863}.actions{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}footer{text-align:center;color:#756c66;padding:14px 0 28px}.printhead{display:none}@media(max-width:620px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.nav button{flex:1}th,td{font-size:.84rem;padding:7px 4px}}@media print{header,.nav,.no-print,footer{display:none!important}.panel{display:none!important}#reports.panel{display:block!important}.card{box-shadow:none;padding:0}.printhead{display:block;text-align:center}.printhead img{max-width:300px}}
+:root{--gold:#d8aa25;--brown:#69483d;--cream:#f7f3eb;--green:#3f705a;--red:#a8241c;--ink:#2c2927}*{box-sizing:border-box}body{margin:0;background:var(--cream);font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:var(--ink)}header{background:#fff;border-bottom:4px solid var(--gold);text-align:center;padding:8px 14px}header img{width:min(430px,92vw)}header p{margin:2px 0 6px;color:#6c625d}main{max-width:860px;margin:20px auto;padding:0 14px}.nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.nav button{border:0;border-radius:10px;padding:12px 16px;font-weight:750;background:#e7e0d6;cursor:pointer}.nav .active{background:var(--brown);color:#fff}.panel{display:none}.panel.active{display:block}.card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 3px 16px #00000012;margin-bottom:16px}h1{font-size:1.35rem;margin:0 0 6px}h2{font-size:1.2rem;margin:0 0 16px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}label{display:block;font-weight:700;margin:0 0 5px}input,select,textarea{width:100%;font:inherit;padding:12px;border:1px solid #bbb;border-radius:10px;background:#fff}textarea{min-height:75px}.primary,.secondary,.editbtn,.deletebtn{border:0;border-radius:10px;padding:13px 18px;font-weight:800;cursor:pointer}.primary{background:var(--green);color:#fff}.secondary{background:var(--brown);color:#fff}.editbtn{background:#e7e0d6;color:var(--ink);padding:8px 10px}.deletebtn{background:var(--red);color:#fff;padding:8px 10px}.notice{padding:12px 14px;border-radius:10px;margin:14px 0}.ok{background:#e7f4ec;color:#235a40}.alert{background:#fde8e6;color:var(--red);font-weight:800}.info{background:#fff5d8;border-left:5px solid var(--gold)}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{padding:9px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}th{background:#f3eee7}.small{font-size:.88rem;color:#6d6863}.actions{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}footer{text-align:center;color:#756c66;padding:14px 0 28px}.printhead{display:none}@media(max-width:620px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.nav button{flex:1}th,td{font-size:.84rem;padding:7px 4px}}@media print{header,.nav,.no-print,footer{display:none!important}.panel{display:none!important}#reports.panel{display:block!important}.card{box-shadow:none;padding:0}.printhead{display:block;text-align:center}.printhead img{max-width:300px}}
 </style></head><body><header><img src="logo.jpg" alt="Hacienda Margarita"><p>Registro de presión arterial</p></header><main>
 <div id="loginCard" class="card no-print" style="display:none"><h2>Iniciar sesión</h2><div class="grid"><div><label>Correo electrónico</label><input id="email" type="email"></div><div><label>Contraseña</label><input id="password" type="password"></div></div><div class="actions"><button id="login" class="primary">Entrar</button></div><div id="loginstatus"></div></div>
 <div id="appNotice" class="notice info no-print" style="display:none"><b>Hacienda Margarita.</b> Portal de registro de presión arterial.</div>
@@ -10,7 +10,7 @@
 <div><label>Fecha</label><input id="date" type="date"></div><div><label>Turno</label><select id="shift"><option value="AM">Mañana (AM)</option><option value="PM">Tarde/Noche (PM)</option></select><div class="small">Se selecciona automáticamente según la hora del dispositivo; puede cambiarlo manualmente.</div></div>
 <div><label>Sistólica</label><input id="sys" inputmode="numeric" type="number" min="40" max="260" placeholder="Ej. 120"></div><div><label>Diastólica</label><input id="dia" inputmode="numeric" type="number" min="25" max="160" placeholder="Ej. 80"></div>
 <div><label>Pulso (opcional)</label><input id="pulse" inputmode="numeric" type="number" min="25" max="220" placeholder="Ej. 72"></div><div><label>Hora</label><input id="time" type="time"></div>
-<div class="full"><label>Observaciones (opcional)</label><textarea id="notes" placeholder="Observaciones relevantes"></textarea></div></div><div id="status"></div><div class="actions"><button id="save" class="primary">Guardar lectura</button></div></div></section>
+<div class="full"><label>Observaciones (opcional)</label><textarea id="notes" placeholder="Observaciones relevantes"></textarea></div></div><div id="status"></div><div class="actions"><button id="save" class="primary">Guardar lectura</button><button id="cancelEdit" class="secondary" style="display:none">Cancelar edición</button></div></div></section>
 <section id="day" class="panel"><div class="card"><h2>Consultar registros por día</h2><div class="grid"><div><label>Fecha</label><input id="qdate" type="date"></div><div><label>Residente</label><input id="qresident" list="residentList" placeholder="Todos"></div></div><div class="actions"><button id="search" class="primary">Buscar</button></div><div id="dayresults"></div></div></section>
 <section id="reports" class="panel"><div class="card"><div class="printhead"><img src="logo.jpg"><h2>Reporte de presión arterial</h2></div><h2 class="no-print">Reportes</h2><div class="grid no-print"><div class="full"><label>Residente</label><input id="rresident" list="residentList" value="Jose L. Gonzalez Leon"></div><div><label>Desde</label><input id="from" type="date"></div><div><label>Hasta</label><input id="to" type="date"></div></div><div class="actions no-print"><button id="report" class="primary">Ver reporte</button><button onclick="window.print()" class="secondary">Imprimir / Guardar PDF</button></div><div id="reportmeta"></div><div id="reportresults"></div></div></section>
 </div></main><footer>Hacienda Margarita · Las Piedras · Tel. 787-405-2020</footer>
@@ -33,9 +33,80 @@ async function getRows(query=''){return await api('presiones?select=id,created_a
 async function names(){try{let rows=await api('presiones?select=residente');let a=[...new Set(['Jose L. Gonzalez Leon',...(rows||[]).map(x=>x.residente).filter(Boolean)])].sort();$('residentList').innerHTML=a.map(x=>`<option value="${esc(x)}">`).join('')}catch(e){console.error(e)}}
 function flag(s,d){s=+s;d=+d;if(s<=90||d<=60)return['Lectura baja','alert'];if(s>=180||d>=120)return['Lectura alta','alert'];return['Lectura registrada dentro de los límites generales configurados','ok']}
 function live(){if(!$('sys').value||!$('dia').value){$('status').innerHTML='';return}let f=flag($('sys').value,$('dia').value);$('status').innerHTML=`<div class="notice ${f[1]}">${f[0]}: ${$('sys').value}/${$('dia').value} mmHg</div>`}$('sys').oninput=$('dia').oninput=live;
-$('save').onclick=async()=>{let residente=$('resident').value.trim(),sistolica=+$('sys').value,diastolica=+$('dia').value;if(!residente||!$('date').value||!sistolica||!diastolica){alert('Complete residente, fecha, sistólica y diastólica.');return}try{let q=`&residente=ilike.${encodeURIComponent(residente)}&fecha=eq.${$('date').value}&turno=eq.${$('shift').value}`;let existing=await getRows(q);if(existing?.length&&!confirm('Ya existe una lectura para este residente y turno en esa fecha. ¿Guardar otra de todas formas?'))return;await api('presiones',{method:'POST',prefer:'return=minimal',body:JSON.stringify({residente,fecha:$('date').value,turno:$('shift').value,sistolica,diastolica,pulso:$('pulse').value?+$('pulse').value:null,hora:$('time').value||null,observaciones:$('notes').value.trim()||null})});$('sys').value=$('dia').value=$('pulse').value='';$('notes').value='';$('status').innerHTML='';names()}catch(e){alert('No se pudo guardar: '+e.message)}};
-function table(rows){if(!rows.length)return'<p>No hay registros para esos criterios.</p>';return `<table><thead><tr><th>Fecha</th><th>Residente</th><th>Turno</th><th>Presión</th><th>Pulso</th><th>Estado</th><th>Observaciones</th></tr></thead><tbody>${rows.map(r=>{let f=flag(r.sistolica,r.diastolica);return `<tr><td>${r.fecha}<br><span class="small">${esc(fmtTime(r.hora))}</span></td><td>${esc(r.residente)}</td><td>${esc(r.turno)}</td><td><b>${r.sistolica}/${r.diastolica}</b></td><td>${esc(r.pulso??'—')}</td><td>${f[0]}</td><td>${esc(r.observaciones||'')}</td></tr>`}).join('')}</tbody></table>`}
-$('search').onclick=async()=>{try{let q=`&fecha=eq.${$('qdate').value}&order=hora.asc`;let p=$('qresident').value.trim();if(p)q+=`&residente=ilike.*${encodeURIComponent(p)}*`;$('dayresults').innerHTML=table(await getRows(q))}catch(e){$('dayresults').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
+let editingId=null;
+function resetEntry(){
+  editingId=null;
+  $('save').textContent='Guardar lectura';
+  $('cancelEdit').style.display='none';
+  $('resident').value='Jose L. Gonzalez Leon';
+  $('date').value=today();
+  $('time').value=nowHHMM();
+  autoShift();
+  $('sys').value=$('dia').value=$('pulse').value='';
+  $('notes').value='';
+  $('status').innerHTML='';
+}
+$('cancelEdit').onclick=resetEntry;
+$('save').onclick=async()=>{
+  let residente=$('resident').value.trim(),sistolica=+$('sys').value,diastolica=+$('dia').value;
+  if(!residente||!$('date').value||!sistolica||!diastolica){alert('Complete residente, fecha, sistólica y diastólica.');return}
+  let data={residente,fecha:$('date').value,turno:$('shift').value,sistolica,diastolica,pulso:$('pulse').value?+$('pulse').value:null,hora:$('time').value||null,observaciones:$('notes').value.trim()||null};
+  try{
+    if(editingId){
+      await api('presiones?id=eq.'+editingId,{method:'PATCH',prefer:'return=minimal',body:JSON.stringify(data)});
+      alert('Lectura actualizada correctamente.');
+      resetEntry();
+      names();
+      return;
+    }
+    let q=`&residente=ilike.${encodeURIComponent(residente)}&fecha=eq.${$('date').value}&turno=eq.${$('shift').value}`;
+    let existing=await getRows(q);
+    if(existing?.length&&!confirm('Ya existe una lectura para este residente y turno en esa fecha. ¿Guardar otra de todas formas?'))return;
+    await api('presiones',{method:'POST',prefer:'return=minimal',body:JSON.stringify(data)});
+    $('sys').value=$('dia').value=$('pulse').value='';
+    $('notes').value='';
+    $('status').innerHTML='';
+    names();
+  }catch(e){alert((editingId?'No se pudo actualizar: ':'No se pudo guardar: ')+e.message)}
+};
+function table(rows,withActions=false){
+  if(!rows.length)return'<p>No hay registros para esos criterios.</p>';
+  return `<table><thead><tr><th>Fecha</th><th>Residente</th><th>Turno</th><th>Presión</th><th>Pulso</th><th>Estado</th><th>Observaciones</th>${withActions?'<th class="no-print">Acciones</th>':''}</tr></thead><tbody>${rows.map(r=>{let f=flag(r.sistolica,r.diastolica);return `<tr><td>${r.fecha}<br><span class="small">${esc(fmtTime(r.hora))}</span></td><td>${esc(r.residente)}</td><td>${esc(r.turno)}</td><td><b>${r.sistolica}/${r.diastolica}</b></td><td>${esc(r.pulso??'—')}</td><td>${f[0]}</td><td>${esc(r.observaciones||'')}</td>${withActions?`<td class="no-print"><div class="actions"><button class="editbtn" onclick="editReading(${r.id})">Editar</button><button class="deletebtn" onclick="deleteReading(${r.id})">Eliminar</button></div></td>`:''}</tr>`}).join('')}</tbody></table>`
+}
+let lastDayRows=[];
+function activateTab(id){
+  document.querySelectorAll('.nav button,.panel').forEach(x=>x.classList.remove('active'));
+  document.querySelector(`.nav button[data-tab="${id}"]`).classList.add('active');
+  $(id).classList.add('active');
+}
+function editReading(id){
+  let r=lastDayRows.find(x=>x.id===id); if(!r)return;
+  editingId=id;
+  $('resident').value=r.residente||'';
+  $('date').value=r.fecha||today();
+  $('shift').value=r.turno||'AM';
+  $('sys').value=r.sistolica??'';
+  $('dia').value=r.diastolica??'';
+  $('pulse').value=r.pulso??'';
+  $('time').value=(r.hora||'').slice(0,5);
+  $('notes').value=r.observaciones||'';
+  $('save').textContent='Guardar cambios';
+  $('cancelEdit').style.display='inline-block';
+  live();
+  activateTab('entry');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+async function deleteReading(id){
+  let r=lastDayRows.find(x=>x.id===id);
+  if(!r||!confirm(`¿Está seguro de que desea eliminar esta lectura de ${r.residente} (${r.fecha}, ${r.turno}, ${r.sistolica}/${r.diastolica})?`))return;
+  try{
+    await api('presiones?id=eq.'+id,{method:'DELETE',prefer:'return=minimal'});
+    alert('Lectura eliminada.');
+    $('search').click();
+    names();
+  }catch(e){alert('No se pudo eliminar: '+e.message)}
+}
+$('search').onclick=async()=>{try{let q=`&fecha=eq.${$('qdate').value}&order=hora.asc`;let p=$('qresident').value.trim();if(p)q+=`&residente=ilike.*${encodeURIComponent(p)}*`;lastDayRows=await getRows(q);$('dayresults').innerHTML=table(lastDayRows,true)}catch(e){$('dayresults').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
 $('report').onclick=async()=>{try{let p=$('rresident').value.trim(),f=$('from').value,t=$('to').value,q=`&fecha=gte.${f}&fecha=lte.${t}&order=fecha.asc,hora.asc`;if(p)q+=`&residente=ilike.*${encodeURIComponent(p)}*`;let r=await getRows(q);$('reportmeta').innerHTML=`<p><b>Residente:</b> ${esc(p||'Todos')} &nbsp; <b>Período:</b> ${f} a ${t}</p>`;$('reportresults').innerHTML=table(r)}catch(e){$('reportresults').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
 document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav button,.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.tab).classList.add('active')});
 if(token)showApp();else showLogin();
