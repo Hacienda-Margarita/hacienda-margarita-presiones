@@ -108,7 +108,7 @@ async function deleteReading(id){
     names();
   }catch(e){alert('No se pudo eliminar: '+e.message)}
 }
-$('search').onclick=async()=>{try{let q=`&fecha=eq.${$('qdate').value}&order=hora.asc`;let p=$('qresident').value.trim();if(p)q+=`&residente=ilike.*${encodeURIComponent(p)}*`;lastDayRows=await getRows(q);$('dayresults').innerHTML=table(lastDayRows,true)}catch(e){$('dayresults').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
+$('search').onclick=async()=>{try{let q=`&fecha=eq.${$('qdate').value}&order=hora.asc`;let p=$('qresident').value.trim();if(p)q+=`&residente=ilike.*${encodeURIComponent(p)}*`;lastDayRows=await getRows(q);$('dayresults').innerHTML=table(lastDayRows,isAdmin)}catch(e){$('dayresults').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
 $('report').onclick=async()=>{try{let p=$('rresident').value.trim(),f=$('from').value,t=$('to').value,q=`&fecha=gte.${f}&fecha=lte.${t}&order=fecha.asc,hora.asc`;if(p)q+=`&residente=ilike.*${encodeURIComponent(p)}*`;let r=await getRows(q);$('reportmeta').innerHTML=`<p><b>Residente:</b> ${esc(p||'Todos')} &nbsp; <b>Período:</b> ${f} a ${t}</p>`;$('reportresults').innerHTML=table(r)}catch(e){$('reportresults').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
 document.querySelectorAll('.nav button[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav button,.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.tab).classList.add('active')});
 if(token)showApp();else showLogin();
