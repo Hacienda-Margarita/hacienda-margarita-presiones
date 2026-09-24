@@ -23,8 +23,9 @@ const autoShift=()=>{const h=+($('time').value||nowHHMM()).split(':')[0];$('shif
 const fmtTime=t=>{if(!t)return'—';let [h,m]=t.slice(0,5).split(':').map(Number),ap=h>=12?'PM':'AM';h=h%12||12;return `${h}:${String(m).padStart(2,'0')} ${ap}`};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 ['date','qdate','from','to'].forEach(x=>$(x).value=today());$('time').value=nowHHMM();autoShift();$('time').addEventListener('change',autoShift);
-let token=sessionStorage.getItem('hm_prod_token')||'';
+let token=sessionStorage.getItem('hm_prod_token')||'';let isAdmin=false;
 function cfg(){return {url:SUPABASE_URL,key:SUPABASE_KEY}}
+async function loadRole(){try{let rows=await api('perfiles?select=rol&user_id=eq.'+JSON.parse(atob(token.split('.')[1])).sub);isAdmin=rows.length>0&&rows[0].rol==='admin';}catch(e){isAdmin=false;}}  
 function showLogin(){$('loginCard').style.display='block';$('appnav').style.display='none';$('appbody').style.display='none';$('appNotice').style.display='none'}
 function showApp(){$('loginCard').style.display='none';$('appnav').style.display='flex';$('appbody').style.display='block';$('appNotice').style.display='block';names()}
 $('login').onclick=async()=>{let c=cfg(),email=$('email').value.trim(),password=$('password').value;if(!email||!password){alert('Escriba correo electrónico y contraseña.');return}$('loginstatus').innerHTML='<p class="small">Conectando…</p>';try{let r=await fetch(c.url+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json','apikey':c.key},body:JSON.stringify({email,password})});let j=await r.json();if(!r.ok)throw new Error(j.msg||j.error_description||j.message||'No se pudo iniciar sesión');token=j.access_token;sessionStorage.setItem('hm_prod_token',token);$('password').value='';showApp()}catch(e){$('loginstatus').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
