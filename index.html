@@ -56,7 +56,8 @@ $('save').onclick=async()=>{
   try{
     if(editingId){
       await api('presiones?id=eq.'+editingId,{method:'PATCH',prefer:'return=minimal',body:JSON.stringify(data)});
-      alert('Lectura actualizada correctamente.');
+     $('status').innerHTML='<div class="notice ok">Lectura actualizada correctamente.</div>';
+      
       resetEntry();
       names();
       return;
@@ -103,8 +104,10 @@ async function deleteReading(id){
   if(!r||!confirm(`¿Está seguro de que desea eliminar esta lectura de ${r.residente} (${r.fecha}, ${r.turno}, ${r.sistolica}/${r.diastolica})?`))return;
   try{
     await api('presiones?id=eq.'+id,{method:'DELETE',prefer:'return=minimal'});
-    alert('Lectura eliminada.');
-    $('search').click();
+ 
+
+    await $('search').onclick();
+      $('dayresults').insertAdjacentHTML('afterbegin','<div class="notice ok">Lectura eliminada correctamente.</div>');
     names();
   }catch(e){alert('No se pudo eliminar: '+e.message)}
 }
