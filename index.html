@@ -13,7 +13,18 @@
 <div class="full"><label>Observaciones (opcional)</label><textarea id="notes" placeholder="Observaciones relevantes"></textarea></div></div><div id="status"></div><div class="actions"><button id="save" class="primary">Guardar lectura</button><button id="cancelEdit" class="secondary" style="display:none">Cancelar edición</button></div></div></section>
 <section id="day" class="panel"><div class="card"><h2>Consultar registros por día</h2><div class="grid"><div><label>Fecha</label><input id="qdate" type="date"></div><div><label>Residente</label><input id="qresident" list="residentList" placeholder="Todos"></div></div><div class="actions"><button id="search" class="primary">Buscar</button></div><div id="dayresults"></div></div></section>
 <section id="reports" class="panel"><div class="card"><div class="printhead"><img src="logo.jpg"><h2>Reporte de presión arterial</h2></div><h2 class="no-print">Reportes</h2><div class="grid no-print"><div class="full"><label>Residente</label><input id="rresident" list="residentList" value="Jose L. Gonzalez Leon"></div><div><label>Desde</label><input id="from" type="date"></div><div><label>Hasta</label><input id="to" type="date"></div></div><div class="actions no-print"><button id="report" class="primary">Ver reporte</button><button onclick="window.print()" class="secondary">Imprimir / Guardar PDF</button></div><div id="reportmeta"></div><div id="reportresults"></div></div></section>
-</div></main><footer>Hacienda Margarita · Las Piedras · Tel. 787-405-2020</footer>
+</div></main>
+  <div id="deleteModal" class="no-print" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:9999;align-items:center;justify-content:center;padding:20px">
+  <div class="card" style="max-width:460px;width:100%;margin:0">
+    <h2>Confirmar eliminación</h2>
+    <p id="deleteMessage">¿Está seguro de que desea eliminar esta lectura?</p>
+    <div class="actions">
+      <button id="cancelDelete" class="secondary">Cancelar</button>
+      <button id="confirmDelete" class="danger">Eliminar</button>
+    </div>
+  </div>
+</div>
+  <footer>Hacienda Margarita · Las Piedras · Tel. 787-405-2020</footer>
 <script>
 const $=x=>document.getElementById(x);
 const SUPABASE_URL='https://uazmikfffebbkxfqnrbm.supabase.co', SUPABASE_KEY='sb_publishable_LQyb9dTKiXX7R2svKtQotg_k79AixpR';
