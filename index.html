@@ -149,12 +149,36 @@ let residentRows=[], editingResidentId=null, currentPhotoPath=null, deletingResi
 const blankPhoto='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="100%" height="100%" fill="#eee8df"/><circle cx="60" cy="44" r="22" fill="#b8aa9e"/><path d="M22 112c5-28 20-42 38-42s33 14 38 42" fill="#b8aa9e"/></svg>`);
 $('residentPhotoPreview').src=blankPhoto;
 async function residentApi(path,opt={}){return api('residentes'+path,opt)}
-function photoUrl(path){return path?`${SUPABASE_URL}/storage/v1/object/public/residentes-fotos/${encodeURI(path)}`:blankPhoto}
+let residentPhotoObjectUrls=[];
+function clearResidentPhotoObjectUrls(){
+  residentPhotoObjectUrls.forEach(u=>{try{URL.revokeObjectURL(u)}catch(e){}});
+  residentPhotoObjectUrls=[];
+}
+async function privatePhotoUrl(path){
+  if(!path)return blankPhoto;
+  let rr=await fetch(`${SUPABASE_URL}/storage/v1/object/authenticated/residentes-fotos/${encodeURI(path)}`,{
+    headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+token}
+  });
+  if(!rr.ok)return blankPhoto;
+  let blob=await rr.blob(),u=URL.createObjectURL(blob);
+  residentPhotoObjectUrls.push(u);
+  return u;
+}
+async function setPrivatePhoto(img,path){
+  if(!img)return;
+  img.src=path?await privatePhotoUrl(path):blankPhoto;
+}
 async function loadResidents(){
  try{residentRows=await residentApi('?select=id,nombre_completo,fecha_nacimiento,habitacion,fecha_ingreso,contacto_principal,telefono_contacto,parentesco,observaciones,estado,foto_path&order=nombre_completo.asc');renderResidents();}
  catch(e){$('residentListStatus').innerHTML=`<div class="notice alert">El módulo Residentes requiere instalar primero la tabla de Supabase: ${esc(e.message)}</div>`}
 }
-function renderResidents(){let q=$('residentSearch').value.trim().toLowerCase();let rows=residentRows.filter(r=>!q||(r.nombre_completo||'').toLowerCase().includes(q)||(r.habitacion||'').toLowerCase().includes(q));$('residentListView').innerHTML=rows.length?rows.map(r=>`<div class="resident-item"><div><b>${esc(r.nombre_completo)}</b><div class="meta">Habitación: ${esc(r.habitacion||'—')} · ${esc(r.estado||'Activo')}</div></div><div class="actions" style="margin:0"><button class="editbtn" onclick="viewResident('${r.id}')">Ver</button>${isAdmin?`<button class="secondary" onclick="editResident('${r.id}')">Editar</button><button class="deletebtn" onclick="deleteResident('${r.id}')">Eliminar</button>`:''}</div></div>`).join(''):'<p class="small">No hay residentes para mostrar.</p>'}
+async function renderResidents(){
+ let q=$('residentSearch').value.trim().toLowerCase();
+ let rows=residentRows.filter(r=>!q||(r.nombre_completo||'').toLowerCase().includes(q)||(r.habitacion||'').toLowerCase().includes(q));
+ clearResidentPhotoObjectUrls();
+ $('residentListView').innerHTML=rows.length?rows.map(r=>`<div class="resident-item"><div class="resident-row" style="gap:10px"><img id="residentThumb_${r.id}" class="resident-photo" style="width:54px;height:54px;border-radius:10px;border-width:2px" src="${blankPhoto}" alt="Foto"><div><b>${esc(r.nombre_completo)}</b><div class="meta">Habitación: ${esc(r.habitacion||'—')} · ${esc(r.estado||'Activo')}</div></div></div><div class="actions" style="margin:0"><button class="editbtn" onclick="viewResident('${r.id}')">Ver</button>${isAdmin?`<button class="secondary" onclick="editResident('${r.id}')">Editar</button><button class="deletebtn" onclick="deleteResident('${r.id}')">Eliminar</button>`:''}</div></div>`).join(''):'<p class="small">No hay residentes para mostrar.</p>';
+ for(const r of rows)if(r.foto_path)await setPrivatePhoto($('residentThumb_'+r.id),r.foto_path);
+}
 $('residentSearch').addEventListener('input',renderResidents);
 function formatPhone(value){let d=String(value||'').replace(/\D/g,'').slice(0,10);if(d.length<=3)return d;if(d.length<=6)return d.slice(0,3)+'-'+d.slice(3);return d.slice(0,3)+'-'+d.slice(3,6)+'-'+d.slice(6)}
 $('resPhone').addEventListener('input',e=>{e.target.value=formatPhone(e.target.value)});
@@ -168,10 +192,19 @@ function showResidentList(){
  resetResidentForm();
  $('residentListView').scrollIntoView({behavior:'smooth',block:'start'});
 }
-window.viewResident=id=>{let r=residentRows.find(x=>String(x.id)===String(id));if(!r)return;$('residentDetail').innerHTML=`<div class="actions no-print" style="margin-top:0;margin-bottom:16px"><button class="secondary" onclick="showResidentList()">← Volver a residentes</button></div><div class="resident-row"><img class="resident-photo" src="${photoUrl(r.foto_path)}" alt="Foto"><div><h2>${esc(r.nombre_completo)}</h2><p><b>Habitación:</b> ${esc(r.habitacion||'—')} &nbsp; <b>Estado:</b> ${esc(r.estado||'Activo')}</p></div></div><div class="grid" style="margin-top:16px"><p><b>Fecha de nacimiento:</b><br>${esc(r.fecha_nacimiento||'—')}</p><p><b>Fecha de ingreso:</b><br>${esc(r.fecha_ingreso||'—')}</p><p><b>Contacto principal:</b><br>${esc(r.contacto_principal||'—')}</p><p><b>Teléfono:</b><br>${esc(r.telefono_contacto||'—')}</p><p><b>Relación:</b><br>${esc(r.parentesco||'—')}</p><p class="full"><b>Observaciones:</b><br>${esc(r.observaciones||'—')}</p></div>`;$('residentDetail').classList.remove('hidden');$('residentFormCard').classList.add('hidden');$('residentDetail').scrollIntoView({behavior:'smooth'})};
-window.editResident=id=>{let r=residentRows.find(x=>String(x.id)===String(id));if(!r)return;editingResidentId=r.id;currentPhotoPath=r.foto_path||null;$('residentFormTitle').textContent='Editar residente';$('resName').value=r.nombre_completo||'';$('resBirth').value=r.fecha_nacimiento||'';$('resRoom').value=r.habitacion||'';$('resAdmission').value=r.fecha_ingreso||'';$('resStatus').value=r.estado||'Activo';$('resContact').value=r.contacto_principal||'';$('resPhone').value=r.telefono_contacto||'';$('resRelation').value=r.parentesco||'';$('resNotes').value=r.observaciones||'';$('residentPhotoPreview').src=photoUrl(r.foto_path);$('residentFormCard').classList.remove('hidden');$('residentDetail').classList.add('hidden');$('residentFormCard').scrollIntoView({behavior:'smooth'})};
-async function uploadResidentPhoto(file,id){if(!file)return currentPhotoPath;let ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');let path=`${id}/${Date.now()}.${ext||'jpg'}`;let rr=await fetch(`${SUPABASE_URL}/storage/v1/object/residentes-fotos/${path}`,{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+token,'Content-Type':file.type||'image/jpeg','x-upsert':'true'},body:file});if(!rr.ok)throw new Error(await rr.text());return path}
-$('saveResident').onclick=async()=>{let nombre=$('resName').value.trim();if(!nombre){$('residentFormStatus').innerHTML='<div class="notice alert">Escriba el nombre completo.</div>';return}try{$('saveResident').disabled=true;let payload={nombre_completo:nombre,fecha_nacimiento:$('resBirth').value||null,habitacion:$('resRoom').value.trim()||null,fecha_ingreso:$('resAdmission').value||null,contacto_principal:$('resContact').value.trim()||null,telefono_contacto:$('resPhone').value.trim()||null,parentesco:$('resRelation').value.trim()||null,observaciones:$('resNotes').value.trim()||null,estado:$('resStatus').value};let id=editingResidentId;if(id){await residentApi('?id=eq.'+id,{method:'PATCH',body:payload,prefer:'return=minimal'})}else{let created=await residentApi('',{method:'POST',body:payload,prefer:'return=representation'});id=created[0].id}let file=$('residentPhoto').files[0];if(file){let path=await uploadResidentPhoto(file,id);await residentApi('?id=eq.'+id,{method:'PATCH',body:{foto_path:path},prefer:'return=minimal'})}$('residentFormStatus').innerHTML='<div class="notice ok">Residente guardado correctamente.</div>';await loadResidents();setTimeout(()=>{$('residentFormCard').classList.add('hidden');resetResidentForm()},700)}catch(e){$('residentFormStatus').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}finally{$('saveResident').disabled=false}};
+window.viewResident=async id=>{let r=residentRows.find(x=>String(x.id)===String(id));if(!r)return;$('residentDetail').innerHTML=`<div class="actions no-print" style="margin-top:0;margin-bottom:16px"><button class="secondary" onclick="showResidentList()">← Volver a residentes</button></div><div class="resident-row"><img id="residentDetailPhoto" class="resident-photo" src="${blankPhoto}" alt="Foto"><div><h2>${esc(r.nombre_completo)}</h2><p><b>Habitación:</b> ${esc(r.habitacion||'—')} &nbsp; <b>Estado:</b> ${esc(r.estado||'Activo')}</p></div></div><div class="grid" style="margin-top:16px"><p><b>Fecha de nacimiento:</b><br>${esc(r.fecha_nacimiento||'—')}</p><p><b>Fecha de ingreso:</b><br>${esc(r.fecha_ingreso||'—')}</p><p><b>Contacto principal:</b><br>${esc(r.contacto_principal||'—')}</p><p><b>Teléfono:</b><br>${esc(r.telefono_contacto||'—')}</p><p><b>Relación:</b><br>${esc(r.parentesco||'—')}</p><p class="full"><b>Observaciones:</b><br>${esc(r.observaciones||'—')}</p></div>`;$('residentDetail').classList.remove('hidden');$('residentFormCard').classList.add('hidden');if(r.foto_path)await setPrivatePhoto($('residentDetailPhoto'),r.foto_path);$('residentDetail').scrollIntoView({behavior:'smooth'})};
+window.editResident=async id=>{let r=residentRows.find(x=>String(x.id)===String(id));if(!r)return;editingResidentId=r.id;currentPhotoPath=r.foto_path||null;$('residentFormTitle').textContent='Editar residente';$('resName').value=r.nombre_completo||'';$('resBirth').value=r.fecha_nacimiento||'';$('resRoom').value=r.habitacion||'';$('resAdmission').value=r.fecha_ingreso||'';$('resStatus').value=r.estado||'Activo';$('resContact').value=r.contacto_principal||'';$('resPhone').value=r.telefono_contacto||'';$('resRelation').value=r.parentesco||'';$('resNotes').value=r.observaciones||'';$('residentPhotoPreview').src=blankPhoto;if(r.foto_path)await setPrivatePhoto($('residentPhotoPreview'),r.foto_path);$('residentFormCard').classList.remove('hidden');$('residentDetail').classList.add('hidden');$('residentFormCard').scrollIntoView({behavior:'smooth'})};
+async function uploadResidentPhoto(file,id){if(!file)return currentPhotoPath;let ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');let path=`${id}/${Date.now()}.${ext||'jpg'}`;let rr=await fetch(`${SUPABASE_URL}/storage/v1/object/residentes-fotos/${path}`,{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+token,'Content-Type':file.type||'image/jpeg','x-upsert':'false'},body:file});if(!rr.ok)throw new Error(await rr.text());return path}
+async function deleteResidentPhoto(path){
+ if(!path)return;
+ let rr=await fetch(`${SUPABASE_URL}/storage/v1/object/residentes-fotos/${encodeURI(path)}`,{
+   method:'DELETE',
+   headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+token}
+ });
+ if(!rr.ok && rr.status!==404)throw new Error(await rr.text());
+}
+
+$('saveResident').onclick=async()=>{let nombre=$('resName').value.trim();if(!nombre){$('residentFormStatus').innerHTML='<div class="notice alert">Escriba el nombre completo.</div>';return}try{$('saveResident').disabled=true;let payload={nombre_completo:nombre,fecha_nacimiento:$('resBirth').value||null,habitacion:$('resRoom').value.trim()||null,fecha_ingreso:$('resAdmission').value||null,contacto_principal:$('resContact').value.trim()||null,telefono_contacto:$('resPhone').value.trim()||null,parentesco:$('resRelation').value.trim()||null,observaciones:$('resNotes').value.trim()||null,estado:$('resStatus').value};let id=editingResidentId;if(id){await residentApi('?id=eq.'+id,{method:'PATCH',body:payload,prefer:'return=minimal'})}else{let created=await residentApi('',{method:'POST',body:payload,prefer:'return=representation'});id=created[0].id}let file=$('residentPhoto').files[0];if(file){let oldPath=currentPhotoPath;let path=await uploadResidentPhoto(file,id);await residentApi('?id=eq.'+id,{method:'PATCH',body:{foto_path:path},prefer:'return=minimal'});if(oldPath&&oldPath!==path)await deleteResidentPhoto(oldPath)}$('residentFormStatus').innerHTML='<div class="notice ok">Residente guardado correctamente.</div>';await loadResidents();setTimeout(()=>{$('residentFormCard').classList.add('hidden');resetResidentForm()},700)}catch(e){$('residentFormStatus').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}finally{$('saveResident').disabled=false}};
 
 
 window.deleteResident=id=>{
@@ -190,6 +223,7 @@ $('confirmResidentDelete').onclick=async()=>{
   try{
     let r=residentRows.find(x=>String(x.id)===String(deletingResidentId));
     await residentApi('?id=eq.'+deletingResidentId,{method:'DELETE',prefer:'return=minimal'});
+    if(r&&r.foto_path)await deleteResidentPhoto(r.foto_path);
     $('residentDeleteModal').style.display='none';
     deletingResidentId=null;
     await loadResidents();
