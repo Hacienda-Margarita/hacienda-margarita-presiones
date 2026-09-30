@@ -28,6 +28,18 @@
     </div>
   </div>
 </div>
+
+<div id="residentDeleteModal" class="no-print" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:10000;align-items:center;justify-content:center;padding:20px">
+  <div class="card" style="max-width:460px;width:100%;margin:0">
+    <h2>Confirmar eliminación de residente</h2>
+    <p id="residentDeleteMessage">¿Está seguro de que desea eliminar este residente?</p>
+    <div class="actions">
+      <button id="cancelResidentDelete" class="secondary">Cancelar</button>
+      <button id="confirmResidentDelete" class="deletebtn">Eliminar residente</button>
+    </div>
+  </div>
+</div>
+
   <footer>Hacienda Margarita · Las Piedras · Tel. 787-405-2020</footer>
 <script>
 const $=x=>document.getElementById(x);
@@ -133,7 +145,7 @@ $('search').onclick=async()=>{try{let q=`&fecha=eq.${$('qdate').value}&order=hor
 $('report').onclick=async()=>{try{let p=$('rresident').value.trim(),f=$('from').value,t=$('to').value,q=`&fecha=gte.${f}&fecha=lte.${t}&order=fecha.asc,hora.asc`;if(p)q+=`&residente=ilike.*${encodeURIComponent(p)}*`;let r=await getRows(q);$('reportmeta').innerHTML=`<p><b>Residente:</b> ${esc(p||'Todos')} &nbsp; <b>Período:</b> ${f} a ${t}</p>`;$('reportresults').innerHTML=table(r)}catch(e){$('reportresults').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
 
 // ===== Residentes v1.1 =====
-let residentRows=[], editingResidentId=null, currentPhotoPath=null;
+let residentRows=[], editingResidentId=null, currentPhotoPath=null, deletingResidentId=null;
 const blankPhoto='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="100%" height="100%" fill="#eee8df"/><circle cx="60" cy="44" r="22" fill="#b8aa9e"/><path d="M22 112c5-28 20-42 38-42s33 14 38 42" fill="#b8aa9e"/></svg>`);
 $('residentPhotoPreview').src=blankPhoto;
 async function residentApi(path,opt={}){return api('residentes'+path,opt)}
@@ -142,7 +154,7 @@ async function loadResidents(){
  try{residentRows=await residentApi('?select=id,nombre_completo,fecha_nacimiento,habitacion,fecha_ingreso,contacto_principal,telefono_contacto,parentesco,observaciones,estado,foto_path&order=nombre_completo.asc');renderResidents();}
  catch(e){$('residentListStatus').innerHTML=`<div class="notice alert">El módulo Residentes requiere instalar primero la tabla de Supabase: ${esc(e.message)}</div>`}
 }
-function renderResidents(){let q=$('residentSearch').value.trim().toLowerCase();let rows=residentRows.filter(r=>!q||(r.nombre_completo||'').toLowerCase().includes(q)||(r.habitacion||'').toLowerCase().includes(q));$('residentListView').innerHTML=rows.length?rows.map(r=>`<div class="resident-item"><div><b>${esc(r.nombre_completo)}</b><div class="meta">Habitación: ${esc(r.habitacion||'—')} · ${esc(r.estado||'Activo')}</div></div><div class="actions" style="margin:0"><button class="editbtn" onclick="viewResident('${r.id}')">Ver</button>${isAdmin?`<button class="secondary" onclick="editResident('${r.id}')">Editar</button>`:''}</div></div>`).join(''):'<p class="small">No hay residentes para mostrar.</p>'}
+function renderResidents(){let q=$('residentSearch').value.trim().toLowerCase();let rows=residentRows.filter(r=>!q||(r.nombre_completo||'').toLowerCase().includes(q)||(r.habitacion||'').toLowerCase().includes(q));$('residentListView').innerHTML=rows.length?rows.map(r=>`<div class="resident-item"><div><b>${esc(r.nombre_completo)}</b><div class="meta">Habitación: ${esc(r.habitacion||'—')} · ${esc(r.estado||'Activo')}</div></div><div class="actions" style="margin:0"><button class="editbtn" onclick="viewResident('${r.id}')">Ver</button>${isAdmin?`<button class="secondary" onclick="editResident('${r.id}')">Editar</button><button class="deletebtn" onclick="deleteResident('${r.id}')">Eliminar</button>`:''}</div></div>`).join(''):'<p class="small">No hay residentes para mostrar.</p>'}
 $('residentSearch').addEventListener('input',renderResidents);
 function formatPhone(value){let d=String(value||'').replace(/\D/g,'').slice(0,10);if(d.length<=3)return d;if(d.length<=6)return d.slice(0,3)+'-'+d.slice(3);return d.slice(0,3)+'-'+d.slice(3,6)+'-'+d.slice(6)}
 $('resPhone').addEventListener('input',e=>{e.target.value=formatPhone(e.target.value)});
@@ -160,6 +172,35 @@ window.viewResident=id=>{let r=residentRows.find(x=>String(x.id)===String(id));i
 window.editResident=id=>{let r=residentRows.find(x=>String(x.id)===String(id));if(!r)return;editingResidentId=r.id;currentPhotoPath=r.foto_path||null;$('residentFormTitle').textContent='Editar residente';$('resName').value=r.nombre_completo||'';$('resBirth').value=r.fecha_nacimiento||'';$('resRoom').value=r.habitacion||'';$('resAdmission').value=r.fecha_ingreso||'';$('resStatus').value=r.estado||'Activo';$('resContact').value=r.contacto_principal||'';$('resPhone').value=r.telefono_contacto||'';$('resRelation').value=r.parentesco||'';$('resNotes').value=r.observaciones||'';$('residentPhotoPreview').src=photoUrl(r.foto_path);$('residentFormCard').classList.remove('hidden');$('residentDetail').classList.add('hidden');$('residentFormCard').scrollIntoView({behavior:'smooth'})};
 async function uploadResidentPhoto(file,id){if(!file)return currentPhotoPath;let ext=(file.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');let path=`${id}/${Date.now()}.${ext||'jpg'}`;let rr=await fetch(`${SUPABASE_URL}/storage/v1/object/residentes-fotos/${path}`,{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+token,'Content-Type':file.type||'image/jpeg','x-upsert':'true'},body:file});if(!rr.ok)throw new Error(await rr.text());return path}
 $('saveResident').onclick=async()=>{let nombre=$('resName').value.trim();if(!nombre){$('residentFormStatus').innerHTML='<div class="notice alert">Escriba el nombre completo.</div>';return}try{$('saveResident').disabled=true;let payload={nombre_completo:nombre,fecha_nacimiento:$('resBirth').value||null,habitacion:$('resRoom').value.trim()||null,fecha_ingreso:$('resAdmission').value||null,contacto_principal:$('resContact').value.trim()||null,telefono_contacto:$('resPhone').value.trim()||null,parentesco:$('resRelation').value.trim()||null,observaciones:$('resNotes').value.trim()||null,estado:$('resStatus').value};let id=editingResidentId;if(id){await residentApi('?id=eq.'+id,{method:'PATCH',body:payload,prefer:'return=minimal'})}else{let created=await residentApi('',{method:'POST',body:payload,prefer:'return=representation'});id=created[0].id}let file=$('residentPhoto').files[0];if(file){let path=await uploadResidentPhoto(file,id);await residentApi('?id=eq.'+id,{method:'PATCH',body:{foto_path:path},prefer:'return=minimal'})}$('residentFormStatus').innerHTML='<div class="notice ok">Residente guardado correctamente.</div>';await loadResidents();setTimeout(()=>{$('residentFormCard').classList.add('hidden');resetResidentForm()},700)}catch(e){$('residentFormStatus').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}finally{$('saveResident').disabled=false}};
+
+
+window.deleteResident=id=>{
+  let r=residentRows.find(x=>String(x.id)===String(id));
+  if(!r)return;
+  deletingResidentId=r.id;
+  $('residentDeleteMessage').textContent=`¿Está seguro de que desea eliminar a ${r.nombre_completo}? Esta acción eliminará su ficha de Residentes.`;
+  $('residentDeleteModal').style.display='flex';
+};
+$('cancelResidentDelete').onclick=()=>{
+  $('residentDeleteModal').style.display='none';
+  deletingResidentId=null;
+};
+$('confirmResidentDelete').onclick=async()=>{
+  if(!deletingResidentId)return;
+  try{
+    let r=residentRows.find(x=>String(x.id)===String(deletingResidentId));
+    await residentApi('?id=eq.'+deletingResidentId,{method:'DELETE',prefer:'return=minimal'});
+    $('residentDeleteModal').style.display='none';
+    deletingResidentId=null;
+    await loadResidents();
+    showResidentList();
+    $('residentListStatus').innerHTML='<div class="notice ok">Residente eliminado correctamente.</div>';
+  }catch(e){
+    $('residentDeleteModal').style.display='none';
+    deletingResidentId=null;
+    $('residentListStatus').innerHTML=`<div class="notice alert">No se pudo eliminar el residente: ${esc(e.message)}</div>`;
+  }
+};
 
 function activatePortal(id){if(id==='residents'){loadResidents();showResidentList();}document.querySelectorAll('.portal-section').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.portal-tab').forEach(x=>x.classList.toggle('active',x.dataset.portal===id));let target=$(id);if(target)target.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}document.querySelectorAll('.portal-tab').forEach(b=>b.onclick=()=>activatePortal(b.dataset.portal));document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>activatePortal(b.dataset.open));document.querySelectorAll('#pressureNav button[data-tab]').forEach(b=>b.onclick=()=>activateTab(b.dataset.tab));
 if(token)showApp();else showLogin();
