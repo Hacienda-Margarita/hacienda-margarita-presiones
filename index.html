@@ -34,13 +34,18 @@
 .public-only{display:none}
 body.public-mode .private-only{display:none!important}
 body.public-mode .public-only{display:inline-block}
-body.public-mode nav button[data-section="residents"],
-body.public-mode nav button[data-section="pressure"],
-body.public-mode nav button[data-section="visits"],
-body.public-mode nav button[data-section="admin"],
-body.public-mode #logoutBtn{display:none!important}
+body.public-mode #appnav{display:flex!important}
+body.public-mode #appbody{display:block!important}
+body.public-mode #appNotice{display:block!important}
 body.public-mode #loginCard{display:none!important}
-body.public-mode #portal{display:block!important}
+body.public-mode #appnav button[data-portal="residents"],
+body.public-mode #appnav button[data-portal="pressure"],
+body.public-mode #appnav button[data-portal="visits"],
+body.public-mode #adminNav,
+body.public-mode #logout{display:none!important}
+body.public-mode #home [data-open="residents"],
+body.public-mode #home [data-open="pressure"],
+body.public-mode #home [data-open="visits"]{display:none!important}
 </style></head><body><header><img src="logo.jpg" alt="Hacienda Margarita"><p>Portal Hacienda Margarita</p></header><main>
 <div id="loginCard" class="card no-print" style="display:none"><h2>Iniciar sesión</h2><div class="grid"><div><label>Correo electrónico</label><input id="email" type="email"></div><div><label>Contraseña</label><input id="password" type="password"></div></div><div class="actions"><button id="login" class="primary">Entrar</button></div><div id="loginstatus"></div></div>
 <div id="appNotice" class="notice info no-print" style="display:none"><b>Portal Hacienda Margarita.</b> Información y servicios para residentes, familiares y personal.</div>
@@ -103,8 +108,8 @@ function cfg(){return {url:SUPABASE_URL,key:SUPABASE_KEY}}
 async function loadRole(){try{let rows=await api('perfiles?select=rol&user_id=eq.'+JSON.parse(atob(token.split('.')[1])).sub);isAdmin=rows.length>0&&rows[0].rol==='admin';}catch(e){isAdmin=false;}}  
 function showLogin(){$('loginCard').style.display='block';$('appnav').style.display='none';$('appbody').style.display='none';$('appNotice').style.display='none'}
 function showApp(){$('loginCard').style.display='none';$('appnav').style.display='flex';$('appbody').style.display='block';$('appNotice').style.display='block';$('adminNav').classList.toggle('hidden',!isAdmin);$('newActivityBtn').classList.toggle('hidden',!isAdmin);$('newNewsBtn').classList.toggle('hidden',!isAdmin);names()}
-$('login').onclick=async()=>{let c=cfg(),email=$('email').value.trim(),password=$('password').value;if(!email||!password){alert('Escriba correo electrónico y contraseña.');return}$('loginstatus').innerHTML='<p class="small">Conectando…</p>';try{let r=await fetch(c.url+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json','apikey':c.key},body:JSON.stringify({email,password})});let j=await r.json();if(!r.ok)throw new Error(j.msg||j.error_description||j.message||'No se pudo iniciar sesión');token=j.access_token;sessionStorage.setItem('hm_prod_token',token);$('password').value='';await loadRole();showApp()}catch(e){$('loginstatus').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
-$('logout').onclick=()=>{sessionStorage.removeItem('hm_prod_token');token='';isAdmin=false;$('loginCard').style.display='block';$('appnav').style.display='none';$('appbody').style.display='none';$('appNotice').style.display='none';};
+$('login').onclick=async()=>{let c=cfg(),email=$('email').value.trim(),password=$('password').value;if(!email||!password){alert('Escriba correo electrónico y contraseña.');return}$('loginstatus').innerHTML='<p class="small">Conectando…</p>';try{let r=await fetch(c.url+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json','apikey':c.key},body:JSON.stringify({email,password})});let j=await r.json();if(!r.ok)throw new Error(j.msg||j.error_description||j.message||'No se pudo iniciar sesión');token=j.access_token;sessionStorage.setItem('hm_prod_token',token);$('password').value='';await loadRole();document.body.classList.remove('public-mode');showApp()}catch(e){$('loginstatus').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
+$('logout').onclick=()=>{sessionStorage.removeItem('hm_prod_token');token='';isAdmin=false;enterPublicMode();};
 async function api(path,opt={}){let c=cfg();let fetchOpt={...opt};if(fetchOpt.body!=null && typeof fetchOpt.body!=='string' && !(fetchOpt.body instanceof FormData) && !(fetchOpt.body instanceof Blob))fetchOpt.body=JSON.stringify(fetchOpt.body);let r=await fetch(c.url+'/rest/v1/'+path,{...fetchOpt,headers:{'apikey':c.key,'Authorization':'Bearer '+token,'Content-Type':'application/json','Prefer':opt.prefer||'',...(opt.headers||{})}});if(r.status===401){sessionStorage.removeItem('hm_prod_token');token='';showLogin();throw new Error('La sesión terminó. Inicie sesión nuevamente.')}if(!r.ok){let t=await r.text();throw new Error(t||'Error al comunicarse con la base de datos.')}if(r.status===204)return null;let t=await r.text();return t?JSON.parse(t):null}
 async function getRows(query=''){return await api('presiones?select=id,created_at,residente,fecha,turno,sistolica,diastolica,pulso,hora,observaciones'+query)}
 async function names(){try{let rows=await api('presiones?select=residente');let a=[...new Set(['Jose L. Gonzalez Leon',...(rows||[]).map(x=>x.residente).filter(Boolean)])].sort();$('residentList').innerHTML=a.map(x=>`<option value="${esc(x)}">`).join('')}catch(e){console.error(e)}}
@@ -453,7 +458,7 @@ $('printEmployeeReport').onclick=()=>printEmployeeHtml($('employeeReportOutput')
 function printEmployeeHtml(content,title){let w=window.open('','_blank','width=900,height=700');if(!w)return alert('Permita ventanas emergentes para imprimir.');w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>body{font-family:Arial,sans-serif;color:#2c2927;margin:36px;line-height:1.45}h2,h3{text-align:center}.small{font-size:12px;color:#666}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}</style></head><body>${content}</body></html>`);w.document.close();w.focus();setTimeout(()=>w.print(),300)}
 
 function activatePortal(id){if(id==='residents'){loadResidents();showResidentList();}if(id==='visits'){openVisits();}if(id==='admin'){loadVisitConfig();}if(id==='activities'){showActivityCalendar();loadActivities();}if(id==='news'){showNewsList();loadNews();}if(id==='admin'&&isAdmin){showAdminMenu();loadPositions();loadEmployees();}document.querySelectorAll('.portal-section').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.portal-tab').forEach(x=>x.classList.toggle('active',x.dataset.portal===id));let target=$(id);if(target)target.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}document.querySelectorAll('.portal-tab').forEach(b=>b.onclick=()=>activatePortal(b.dataset.portal));document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>activatePortal(b.dataset.open));document.querySelectorAll('#pressureNav button[data-tab]').forEach(b=>b.onclick=()=>activateTab(b.dataset.tab));
-if(token)showApp();else showLogin();
+if(token){showApp();}else{enterPublicMode();}
 
 async function publicApi(path){
   const r=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{headers:{apikey:SUPABASE_KEY}});
@@ -462,19 +467,28 @@ async function publicApi(path){
 }
 async function enterPublicMode(){
   document.body.classList.add('public-mode');
-  if($('portal'))$('portal').classList.remove('hidden');
+  $('loginCard').style.display='none';
+  $('appnav').style.display='flex';
+  $('appbody').style.display='block';
+  $('appNotice').style.display='block';
+  $('adminNav').classList.add('hidden');
   document.querySelectorAll('.portal-section').forEach(x=>x.classList.remove('active'));
-  if($('home'))$('home').classList.add('active');
+  $('home').classList.add('active');
+  document.querySelectorAll('.portal-tab').forEach(b=>b.classList.toggle('active',b.dataset.portal==='home'));
   try{
     activityRows=await publicApi('actividades?select=id,titulo,fecha,hora_inicio,hora_fin,lugar,descripcion,serie_id,visible_publico&visible_publico=eq.true&order=fecha.asc,hora_inicio.asc');
     if(typeof renderActivities==='function')renderActivities();
-  }catch(e){}
+  }catch(e){console.warn('Actividades públicas:',e)}
   try{
     newsRows=await publicApi('noticias?select=id,titulo,fecha_publicacion,publicado_por,categoria,contenido,estado,visible_publico&estado=eq.Publicada&visible_publico=eq.true&order=fecha_publicacion.desc');
     if(typeof renderNews==='function')renderNews();
-  }catch(e){}
+  }catch(e){console.warn('Noticias públicas:',e)}
 }
-window.addEventListener('DOMContentLoaded',()=>{if(!$('staffAccessBtn'))return;$('staffAccessBtn').onclick=()=>{document.body.classList.remove('public-mode');if($('portal'))$('portal').classList.add('hidden');if($('loginCard'))$('loginCard').classList.remove('hidden')};});
-
-setTimeout(()=>{if(!sessionToken && document.body && !document.body.classList.contains('public-mode'))enterPublicMode()},500);
+$('staffAccessBtn').onclick=()=>{
+  document.body.classList.remove('public-mode');
+  $('appnav').style.display='none';
+  $('appbody').style.display='none';
+  $('appNotice').style.display='none';
+  $('loginCard').style.display='block';
+};
 </script></body></html>
