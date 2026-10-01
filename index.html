@@ -156,6 +156,7 @@ $('save').onclick=async()=>{
     let existing=await getRows(q);
     if(existing?.length&&!confirm('Ya existe una lectura para este residente y turno en esa fecha. ¿Guardar otra de todas formas?'))return;
     await api('presiones',{method:'POST',prefer:'return=minimal',body:JSON.stringify(data)});
+    $('resident').value='';
     $('sys').value=$('dia').value=$('pulse').value='';
     $('notes').value='';
     $('status').innerHTML='';
