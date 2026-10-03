@@ -64,7 +64,7 @@ body.public-mode .calendar-num{display:block!important;color:#2c2927!important}
 <div id="residentReportCard" class="card hidden"><div class="actions no-print" style="margin-top:0"><button id="backResidentReport" class="secondary">← Volver a residentes</button></div><h2>Reporte de Residentes</h2><div class="grid no-print"><div><label>Mostrar</label><select id="residentReportFilter"><option value="Todos">Todos</option><option value="Activo">Activos</option><option value="Inactivo">Inactivos</option></select></div></div><div class="actions no-print"><button id="generateResidentReport" class="secondary">Generar reporte</button><button id="printResidentReport" class="primary hidden">Imprimir / Guardar PDF</button></div><div id="residentReportOutput"></div></div><div id="residentFormCard" class="card hidden"><div class="actions" style="margin-top:0;margin-bottom:10px"><button id="backResidentForm" type="button" class="secondary">← Volver a residentes</button></div><h2 id="residentFormTitle">Nuevo residente</h2><div class="resident-row"><img id="residentPhotoPreview" class="resident-photo" alt="Foto del residente"><div style="flex:1"><label>Foto (opcional)</label><input id="residentPhoto" type="file" accept="image/*" capture="environment"><p class="small">Puede seleccionar una foto existente o usar la cámara en dispositivos compatibles.</p></div></div><div class="grid" style="margin-top:16px"><div class="full"><label>Nombre completo</label><input id="resName"></div><div><label>Fecha de nacimiento</label><input id="resBirth" type="date"></div><div><label>Habitación</label><input id="resRoom" placeholder="Ej. 12A"></div><div><label>Fecha de ingreso</label><input id="resAdmission" type="date"></div><div><label>Estado</label><select id="resStatus"><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option></select></div><div class="full"><label>Contacto principal / familiar</label><input id="resContact"></div><div><label>Teléfono del contacto</label><input id="resPhone" type="tel" inputmode="numeric" maxlength="12" placeholder="787-555-5555"></div><div><label>Relación / parentesco</label><input id="resRelation" placeholder="Ej. Hija, hijo, tutor"></div><div class="full"><label>Observaciones generales</label><textarea id="resNotes"></textarea></div></div><div id="restrictedVisitorsBox" class="hidden" style="margin-top:18px;border-top:1px solid #ddd;padding-top:14px"><h3>Personas no autorizadas para visitas</h3><p class="small">Solo administradores pueden mantener esta lista.</p><div id="restrictedVisitorsList"></div><div class="grid"><div class="full"><label>Nombre completo</label><input id="restrictedName"></div><div class="full"><label>Observaciones</label><input id="restrictedNotes"></div></div><div class="actions"><button id="addRestrictedVisitor" type="button" class="secondary">Añadir persona no autorizada</button></div><div id="restrictedStatus"></div></div><div id="residentFormStatus"></div><div class="actions"><button id="saveResident" class="primary">Guardar residente</button><button id="cancelResident" class="secondary">Cancelar</button></div></div>
 <div id="residentDetail" class="card hidden"></div>
 </section><section id="pressure" class="portal-section"><div class="card no-print"><h2>Presiones</h2><nav id="pressureNav" class="nav"><button class="active" data-tab="entry">Registrar presión</button><button data-tab="day">Consultar día</button><button data-tab="reports">Reportes</button></nav></div><section id="entry" class="panel active"><div class="card"><h1>Registrar presión</h1><p class="small">Complete la lectura y pulse Guardar.</p><div class="grid">
-<div class="full"><label>Residente</label><input id="resident" list="residentList" value=""><datalist id="residentList"></datalist></div>
+<div class="full"><label>Residente</label><div id="residentPicker" class="resident-picker"><div class="resident-input-row"><input id="resident" value="" autocomplete="off" placeholder="Escriba para buscar residente"><button id="residentDropBtn" type="button" class="secondary resident-drop-btn" aria-label="Mostrar residentes activos" title="Mostrar residentes activos">▼</button></div><div id="residentDropdown" class="resident-dropdown" role="listbox" style="display:none"></div></div></div>
 <div><label>Fecha</label><input id="date" type="date"></div><div><label>Turno</label><select id="shift"><option value="AM">Mañana (AM)</option><option value="PM">Tarde/Noche (PM)</option></select><div class="small">Se selecciona automáticamente según la hora del dispositivo; puede cambiarlo manualmente.</div></div>
 <div><label>Sistólica</label><input id="sys" inputmode="numeric" type="number" min="40" max="260" placeholder="Ej. 120"></div><div><label>Diastólica</label><input id="dia" inputmode="numeric" type="number" min="25" max="160" placeholder="Ej. 80"></div>
 <div><label>Pulso (opcional)</label><input id="pulse" inputmode="numeric" type="number" min="25" max="220" placeholder="Ej. 72"></div><div><label>Hora</label><input id="time" type="time"></div>
@@ -128,7 +128,18 @@ $('login').onclick=async()=>{let c=cfg(),email=$('email').value.trim(),password=
 $('logout').onclick=()=>{sessionStorage.removeItem('hm_prod_token');token='';isAdmin=false;enterPublicMode();};
 async function api(path,opt={}){let c=cfg();let fetchOpt={...opt};if(fetchOpt.body!=null && typeof fetchOpt.body!=='string' && !(fetchOpt.body instanceof FormData) && !(fetchOpt.body instanceof Blob))fetchOpt.body=JSON.stringify(fetchOpt.body);let r=await fetch(c.url+'/rest/v1/'+path,{...fetchOpt,headers:{'apikey':c.key,'Authorization':'Bearer '+token,'Content-Type':'application/json','Prefer':opt.prefer||'',...(opt.headers||{})}});if(r.status===401){sessionStorage.removeItem('hm_prod_token');token='';isAdmin=false;enterPublicMode();throw new Error('La sesión terminó. Inicie sesión nuevamente.')}if(!r.ok){let t=await r.text();throw new Error(t||'Error al comunicarse con la base de datos.')}if(r.status===204)return null;let t=await r.text();return t?JSON.parse(t):null}
 async function getRows(query=''){return await api('presiones?select=id,created_at,residente,fecha,turno,sistolica,diastolica,pulso,hora,observaciones'+query)}
-async function names(){try{let rows=await api('residentes?select=nombre_completo,estado&estado=eq.Activo&order=nombre_completo.asc');let a=[...new Set((rows||[]).map(x=>x.nombre_completo).filter(Boolean))];$('residentList').innerHTML=a.map(x=>`<option value="${esc(x)}">`).join('')}catch(e){console.error(e)}}
+let activeResidentNames=[];
+async function names(){try{let rows=await api('residentes?select=nombre_completo,estado&estado=eq.Activo&order=nombre_completo.asc');activeResidentNames=[...new Set((rows||[]).map(x=>x.nombre_completo).filter(Boolean))];renderResidentDropdown($('resident')?.value||'',false)}catch(e){console.error(e)}}
+function renderResidentDropdown(filter='',show=true){
+ const box=$('residentDropdown'); if(!box)return;
+ const q=(filter||'').trim().toLocaleLowerCase('es');
+ const matches=activeResidentNames.filter(n=>!q||n.toLocaleLowerCase('es').includes(q));
+ box.innerHTML=matches.length?matches.map(n=>`<button type="button" class="resident-option" role="option" data-resident="${esc(n)}">${esc(n)}</button>`).join(''):'<div class="resident-empty">No hay residentes activos que coincidan.</div>';
+ box.style.display=show?'block':'none';
+ box.querySelectorAll('.resident-option').forEach(b=>b.onclick=()=>{ $('resident').value=b.dataset.resident; box.style.display='none'; $('resident').focus(); });
+}
+function closeResidentDropdown(){if($('residentDropdown'))$('residentDropdown').style.display='none'}
+
 function flag(s,d){s=+s;d=+d;if(s<=90||d<=60)return['Lectura baja','alert'];if(s>=180||d>=120)return['Lectura alta','alert'];return['Lectura registrada dentro de los límites generales configurados','ok']}
 function live(){if(!$('sys').value||!$('dia').value){$('status').innerHTML='';return}let f=flag($('sys').value,$('dia').value);$('status').innerHTML=`<div class="notice ${f[1]}">${f[0]}: ${$('sys').value}/${$('dia').value} mmHg</div>`}$('sys').oninput=$('dia').oninput=live;
 let editingId=null;
@@ -146,6 +157,12 @@ let editingDeleteId=null;
   $('status').innerHTML='';
 }
 $('cancelEdit').onclick=resetEntry;
+$('resident').addEventListener('input',()=>renderResidentDropdown($('resident').value,true));
+$('resident').addEventListener('focus',()=>{if($('resident').value.trim())renderResidentDropdown($('resident').value,true)});
+$('residentDropBtn').onclick=e=>{e.preventDefault();e.stopPropagation();let open=$('residentDropdown').style.display==='block';renderResidentDropdown('',!open)};
+document.addEventListener('click',e=>{if(!$('residentPicker').contains(e.target))closeResidentDropdown()});
+$('resident').addEventListener('keydown',e=>{if(e.key==='Escape')closeResidentDropdown()});
+
 $('save').onclick=async()=>{
   let residente=$('resident').value.trim(),sistolica=+$('sys').value,diastolica=+$('dia').value;
   if(!residente||!$('date').value||!sistolica||!diastolica){await portalAlert('Complete residente, fecha, sistólica y diastólica.');return}
@@ -159,9 +176,12 @@ $('save').onclick=async()=>{
       names();
       return;
     }
-    let q=`&residente=ilike.${encodeURIComponent(residente)}&fecha=eq.${$('date').value}&turno=eq.${$('shift').value}`;
+    let q=`&residente=eq.${encodeURIComponent(residente)}&fecha=eq.${$('date').value}&turno=eq.${$('shift').value}`;
     let existing=await getRows(q);
-    if(existing?.length&&!(await portalConfirm('Ya existe una lectura para este residente y turno en esa fecha. ¿Guardar otra de todas formas?','Lectura existente')))return;
+    if(existing?.length){
+      const continuar=await portalConfirm('Ya existe una lectura para este residente y turno en esa fecha. ¿Guardar otra de todas formas?','Lectura existente');
+      if(!continuar)return;
+    }
     await api('presiones',{method:'POST',prefer:'return=minimal',body:JSON.stringify(data)});
     $('resident').value='';
     $('sys').value=$('dia').value=$('pulse').value='';
@@ -472,7 +492,17 @@ $('generateEmployeeReport').onclick=()=>{let f=$('employeeReportFilter').value,r
 $('backEmployeeReportView').onclick=()=>{document.querySelectorAll('.portal-section').forEach(x=>x.classList.remove('active'));$('admin').classList.add('active');hideAdminPanels();$('employeeAdminHome').classList.remove('hidden');loadEmployees()};
 $('printEmployeeReportView').onclick=()=>printEmployeeHtml($('employeeReportViewOutput').innerHTML,'Reporte de Empleados');
 $('printEmployeeReport').onclick=()=>printEmployeeHtml($('employeeReportOutput').innerHTML,'Reporte de Empleados');
-async function printEmployeeHtml(content,title){let w=window.open('','_blank','width=900,height=700');if(!w)return await portalAlert('Permita ventanas emergentes para imprimir.');w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>body{font-family:Arial,sans-serif;color:#2c2927;margin:36px;line-height:1.45}h2,h3{text-align:center}.small{font-size:12px;color:#666}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}</style></head><body>${content}</body></html>`);w.document.close();w.focus();setTimeout(()=>w.print(),300)}
+async function printEmployeeHtml(content,title){let w=window.open('','_blank','width=900,height=700');if(!w)return await portalAlert('Permita ventanas emergentes para imprimir.');w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>body{font-family:Arial,sans-serif;color:#2c2927;margin:36px;line-height:1.45}h2,h3{text-align:center}.small{font-size:12px;color:#666}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}
+/* v1.6.0 - selector dinámico de residentes */
+.resident-picker{position:relative;width:100%}
+.resident-input-row{display:flex;gap:6px;align-items:stretch}
+.resident-input-row #resident{flex:1;min-width:0}
+.resident-drop-btn{width:46px;min-width:46px;padding:0;font-size:16px}
+.resident-dropdown{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:20000;max-height:260px;overflow-y:auto;background:#fff;border:1px solid #cfc8c1;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.16);padding:5px}
+.resident-option{display:block;width:100%;text-align:left;background:#fff;color:#2c2927;border:0;border-radius:7px;padding:10px 12px;cursor:pointer;font:inherit}
+.resident-option:hover,.resident-option.active{background:#f1ece7}
+.resident-empty{padding:10px 12px;color:#6d655f;font-size:.92rem}
+</style></head><body>${content}</body></html>`);w.document.close();w.focus();setTimeout(()=>w.print(),300)}
 
 function activatePortal(id){if(id==='residents'){loadResidents();showResidentList();}if(id==='visits'){openVisits();}if(id==='admin'){loadVisitConfig();}if(id==='activities'){showActivityCalendar();loadActivities();}if(id==='news'){showNewsList();loadNews();}if(id==='admin'&&isAdmin){showAdminMenu();loadPositions();loadEmployees();}document.querySelectorAll('.portal-section').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.portal-tab').forEach(x=>x.classList.toggle('active',x.dataset.portal===id));let target=$(id);if(target)target.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}document.querySelectorAll('.portal-tab').forEach(b=>b.onclick=()=>activatePortal(b.dataset.portal));document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>activatePortal(b.dataset.open));document.querySelectorAll('#pressureNav button[data-tab]').forEach(b=>b.onclick=()=>activateTab(b.dataset.tab));
 if(token){showApp();}else{enterPublicMode();}
@@ -510,4 +540,4 @@ $('staffAccessBtn').onclick=()=>{
   $('appNotice').style.display='none';
   $('loginCard').style.display='block';
 };
-</script><div id="portalDialog" class="modal" style="display:none;z-index:9999"><div class="modal-card" style="max-width:520px"><h3 id="portalDialogTitle">Hacienda Margarita</h3><p id="portalDialogMessage" style="white-space:pre-wrap"></p><div class="actions" style="justify-content:flex-end"><button id="portalDialogCancel" class="secondary">Cancelar</button><button id="portalDialogOk" class="primary">Aceptar</button></div></div></div></body></html>
+</script><div id="portalDialog" class="no-print" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:30000;align-items:center;justify-content:center;padding:20px"><div class="card" style="max-width:520px;width:100%;margin:0"><h3 id="portalDialogTitle">Hacienda Margarita</h3><p id="portalDialogMessage" style="white-space:pre-wrap"></p><div class="actions" style="justify-content:flex-end"><button id="portalDialogCancel" class="secondary">Cancelar</button><button id="portalDialogOk" class="primary">Aceptar</button></div></div></div></body></html>
