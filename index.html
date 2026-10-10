@@ -582,9 +582,27 @@ async function hmGenerateQR(){
 window.openVisitSignature=async id=>{hmQrVisit=id;$('hmQrModal').style.display='flex';await hmGenerateQR()};
 $('hmQrRefresh').onclick=hmGenerateQR;
 $('hmQrCheck').onclick=async()=>{
- try{const d=await hmQrCall('status',{visit_id:hmQrVisit});
- $('hmQrStatus').textContent=d.signed?'✓ Firma recibida y almacenada.':'La firma aún no se ha recibido.';}
- catch(e){$('hmQrStatus').textContent=e.message}
+ const button=$('hmQrCheck'), status=$('hmQrStatus');
+ if(!hmQrVisit){status.textContent='No hay una visita seleccionada para comprobar.';return;}
+ button.disabled=true;
+ status.textContent='Consultando la firma en Supabase…';
+ status.style.color='#6b4b3e';
+ try{
+  const d=await hmQrCall('status',{visit_id:hmQrVisit});
+  if(d.signed){
+   const fecha=d.signed_at||d.firmado_en||null;
+   let fechaTexto='';
+   if(fecha){const dt=new Date(fecha);if(!Number.isNaN(dt.getTime()))fechaTexto=' · '+dt.toLocaleString('es-PR',{dateStyle:'medium',timeStyle:'short'});}
+   status.textContent='✓ Firma registrada correctamente'+fechaTexto+'.';
+   status.style.color='#246b48';
+  }else{
+   status.textContent='La firma todavía no aparece registrada. Si acaba de firmar, espere unos segundos y vuelva a comprobar.';
+   status.style.color='#6b4b3e';
+  }
+ }catch(e){
+  status.textContent='No se pudo comprobar la firma: '+(e?.message||'Error de conexión.');
+  status.style.color='#a12b2b';
+ }finally{button.disabled=false;}
 };
 $('hmQrClose').onclick=()=>{$('hmQrModal').style.display='none';hmQrVisit=null};
 </script><div id="portalDialog" class="no-print" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:30000;align-items:center;justify-content:center;padding:20px"><div class="card" style="max-width:520px;width:100%;margin:0"><h3 id="portalDialogTitle">Hacienda Margarita</h3><p id="portalDialogMessage" style="white-space:pre-wrap"></p><div class="actions" style="justify-content:flex-end"><button id="portalDialogCancel" class="secondary">Cancelar</button><button id="portalDialogOk" class="primary">Aceptar</button></div></div></div><div id="hmQrModal" class="no-print" style="display:none;position:fixed;inset:0;z-index:35000;background:#0009;align-items:center;justify-content:center;padding:18px">
