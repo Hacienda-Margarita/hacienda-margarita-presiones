@@ -34,6 +34,7 @@
 .public-only{display:none}
 body.public-mode .private-only{display:none!important}
 body.public-mode .public-only{display:inline-block}
+body.public-mode a.public-only[href="solicitar-visita.html"]{display:inline-flex}
 body.public-mode #appnav{display:flex!important}
 body.public-mode #appbody{display:block!important}
 body.public-mode #appNotice{display:block!important}
@@ -60,7 +61,7 @@ body.public-mode .calendar-num{display:block!important;color:#2c2927!important}
 /* v1.6.1 - selector Residente tipo combobox/dropdown */
 .resident-picker{position:relative;width:100%}
 .resident-input-row{position:relative;width:100%}
-.resident-input-row #resident{width:100%;padding-right:48px}
+.resident-input-row #resident,.resident-input-row #rresident{width:100%;padding-right:48px}
 .resident-drop-btn{position:absolute;right:1px;top:1px;bottom:1px;width:44px;border:0;border-left:1px solid #cfc8c1;border-radius:0 10px 10px 0;background:transparent;color:#5b3a2e;font-size:20px;line-height:1;cursor:pointer;padding:0;margin:0}
 .resident-drop-btn:hover,.resident-drop-btn:focus{background:#f1ece7}
 .resident-dropdown{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:20000;max-height:260px;overflow-y:auto;background:#fff;border:1px solid #cfc8c1;border-radius:10px;box-shadow:0 10px 24px rgba(0,0,0,.16);padding:4px}
@@ -82,10 +83,19 @@ body.public-mode .calendar-num{display:block!important;color:#2c2927!important}
 .hm-review-value{display:block;font-size:.94rem;overflow-wrap:anywhere}
 .hm-review-note{padding:9px 11px;background:#fff4d9;border-radius:8px}
 @media(max-width:620px){.hm-review-grid{grid-template-columns:1fr}}
+.account-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 0}
+#accountList{overflow-x:auto}#accountList th,#accountList td{padding:12px 8px;vertical-align:middle}#accountList td:first-child{overflow-wrap:anywhere;min-width:175px}
+.account-button{box-sizing:border-box;min-width:104px;min-height:40px;border:0;border-radius:8px;padding:8px 12px;background:#62463c;color:#fff;font:inherit;font-size:.875rem;font-weight:700;cursor:pointer;white-space:nowrap}
+.account-button.account-delete{background:#a42e2e}.account-button:disabled{background:#e9e4dc;color:#625d56;cursor:default}
+#accountDialog{border:0;border-radius:14px;padding:24px;width:min(460px,calc(100% - 32px));box-sizing:border-box;color:inherit}
+#accountDialog::backdrop{background:#0008}#accountDialogField{margin:14px 0}#accountDialog .account-toolbar{justify-content:flex-end;margin-bottom:0}
+#portalDialog[data-tone="warning"] .card{border-top:5px solid #b68c39;border-radius:16px;padding:24px;box-shadow:0 18px 48px #0003}
+#portalDialog[data-tone="warning"] h3{color:#53382d;margin:0 0 10px}
+#portalDialog[data-tone="warning"] p{line-height:1.55;margin:0 0 18px}
 </style></head><body><header><img src="logo.jpg" alt="Hacienda Margarita"><p>Portal Hacienda Margarita</p></header><main>
 <div id="loginCard" class="card no-print" style="display:none"><h2>Iniciar sesión</h2><div class="grid"><div><label>Correo electrónico</label><input id="email" type="email"></div><div><label>Contraseña</label><input id="password" type="password"></div></div><div class="actions"><button id="login" class="primary">Entrar</button></div><div id="loginstatus"></div></div>
 <div id="appNotice" class="notice info no-print" style="display:none"><b>Portal Hacienda Margarita.</b> Información y servicios para residentes, familiares y personal.</div>
-<nav id="appnav" class="nav no-print" style="display:none"><button class="active portal-tab" data-portal="home">Inicio</button><button class="portal-tab" data-portal="residents">Residentes</button><button class="portal-tab" data-portal="pressure">Vitales</button><button class="portal-tab" data-portal="visits">Visitas</button><button class="portal-tab" data-portal="activities">Actividades</button><button class="portal-tab" data-portal="news">Noticias</button><button class="portal-tab" data-portal="about">Quiénes Somos</button><button class="portal-tab" data-portal="contacts">Contactos</button><button id="adminNav" class="portal-tab hidden" data-portal="admin">Administración</button><button id="logout" class="danger">Cerrar sesión</button><a class="public-only" href="solicitar-visita.html" style="display:inline-flex;align-items:center;padding:10px 14px;border-radius:9px;background:#38735b;color:white;font-weight:700;text-decoration:none">Solicitar Visita</a><button id="staffAccessBtn" class="public-only">Acceso al Personal</button></nav>
+<nav id="appnav" class="nav no-print" style="display:none"><button class="active portal-tab" data-portal="home">Inicio</button><button class="portal-tab" data-portal="residents">Residentes</button><button class="portal-tab" data-portal="pressure">Vitales</button><button class="portal-tab" data-portal="visits">Visitas</button><button class="portal-tab" data-portal="activities">Actividades</button><button class="portal-tab" data-portal="news">Noticias</button><button class="portal-tab" data-portal="about">Quiénes Somos</button><button class="portal-tab" data-portal="contacts">Contactos</button><button id="adminNav" class="portal-tab hidden" data-portal="admin">Administración</button><button id="logout" class="danger">Cerrar sesión</button><a class="public-only" href="solicitar-visita.html" style="align-items:center;padding:10px 14px;border-radius:9px;background:#38735b;color:white;font-weight:700;text-decoration:none">Solicitar Visita</a><button id="staffAccessBtn" class="public-only">Acceso al Personal</button></nav>
 <div id="appbody" style="display:none"><section id="home" class="portal-section active"><div class="card"><h1>Bienvenido a Portal Hacienda Margarita</h1><p class="section-intro">Acceso central a información y servicios de Hacienda Margarita.</p></div><div class="module-grid"><div class="module-card"><h3>Residentes</h3><p>Información general y expediente de residentes.</p><button data-open="residents">Abrir</button></div><div class="module-card"><h3>Vitales</h3><p>Registro, consulta y reportes de presión arterial, pulso y temperatura.</p><button data-open="pressure">Abrir</button></div><div class="module-card"><h3>Visitas</h3><p>Programación y consulta de citas de visitas.</p><button data-open="visits">Abrir</button></div><div class="module-card"><h3>Calendario de Actividades</h3><p>Actividades y eventos de Hacienda Margarita.</p><button data-open="activities">Abrir</button></div><div class="module-card"><h3>Noticias</h3><p>Noticias y avisos de interés.</p><button data-open="news">Abrir</button></div><div class="module-card"><h3>Información Institucional</h3><p>Quiénes somos, nuestras facilidades y contactos.</p><button data-open="about">Abrir</button></div></div></section><section id="residents" class="portal-section">
 <div id="residentListCard" class="card no-print"><h2>Residentes</h2><div class="resident-toolbar"><div style="flex:1;min-width:220px"><label>Buscar residente</label><input id="residentSearch" placeholder="Escriba nombre o habitación"></div><div class="actions" style="margin:0"><button id="residentReportBtn" class="secondary">Reporte de residentes</button><button id="newResident" class="primary">Nuevo residente</button></div></div><div id="residentListView" class="resident-list"></div><div id="residentListStatus"></div></div>
 <div id="residentReportCard" class="card hidden"><div class="actions no-print" style="margin-top:0"><button id="backResidentReport" class="secondary">← Volver a residentes</button></div><h2>Reporte de Residentes</h2><div class="grid no-print"><div><label>Mostrar</label><select id="residentReportFilter"><option value="Todos">Todos</option><option value="Activo">Activos</option><option value="Inactivo">Inactivos</option></select></div></div><div class="actions no-print"><button id="generateResidentReport" class="secondary">Generar reporte</button><button id="printResidentReport" class="primary hidden">Imprimir / Guardar PDF</button></div><div id="residentReportOutput"></div></div><div id="residentFormCard" class="card hidden"><div class="actions" style="margin-top:0;margin-bottom:10px"><button id="backResidentForm" type="button" class="secondary">← Volver a residentes</button></div><h2 id="residentFormTitle">Nuevo residente</h2><div class="resident-row"><img id="residentPhotoPreview" class="resident-photo" alt="Foto del residente"><div style="flex:1"><label>Foto (opcional)</label><input id="residentPhoto" type="file" accept="image/*" capture="environment"><p class="small">Puede seleccionar una foto existente o usar la cámara en dispositivos compatibles.</p></div></div><div class="grid" style="margin-top:16px"><div class="full"><label>Nombre completo</label><input id="resName"></div><div><label>Fecha de nacimiento</label><input id="resBirth" type="date"></div><div><label>Habitación</label><input id="resRoom" placeholder="Ej. 12A"></div><div><label>Fecha de ingreso</label><input id="resAdmission" type="date"></div><div><label>Estado</label><select id="resStatus"><option value="Activo">Activo</option><option value="Inactivo">Inactivo</option></select></div><div class="full"><label>Contacto principal / familiar</label><input id="resContact"></div><div><label>Teléfono del contacto</label><input id="resPhone" type="tel" inputmode="numeric" maxlength="12" placeholder="787-555-5555"></div><div><label>Relación / parentesco</label><input id="resRelation" placeholder="Ej. Hija, hijo, tutor"></div><div class="full"><label>Observaciones generales</label><textarea id="resNotes"></textarea></div></div><div id="restrictedVisitorsBox" class="hidden" style="margin-top:18px;border-top:1px solid #ddd;padding-top:14px"><h3>Personas no autorizadas para visitas</h3><p class="small">Solo administradores pueden mantener esta lista.</p><div id="restrictedVisitorsList"></div><div class="grid"><div class="full"><label>Nombre completo</label><input id="restrictedName"></div><div class="full"><label>Observaciones</label><input id="restrictedNotes"></div></div><div class="actions"><button id="addRestrictedVisitor" type="button" class="secondary">Añadir persona no autorizada</button></div><div id="restrictedStatus"></div></div><div id="residentFormStatus"></div><div class="actions"><button id="saveResident" class="primary">Guardar residente</button><button id="cancelResident" class="secondary">Cancelar</button></div></div>
@@ -97,7 +107,7 @@ body.public-mode .calendar-num{display:block!important;color:#2c2927!important}
 <div><label>Pulso (opcional)</label><input id="pulse" inputmode="numeric" type="number" min="25" max="220" placeholder="Ej. 72"></div><div><label>Temperatura (°F, opcional)</label><input id="temperature" inputmode="decimal" type="number" min="85" max="115" step="0.1" placeholder="Ej. 98.6"></div><div><label>Hora</label><input id="time" type="time"></div>
 <div class="full"><label>Observaciones (opcional)</label><textarea id="notes" placeholder="Observaciones relevantes"></textarea></div></div><div id="status"></div><div class="actions"><button id="save" class="primary">Guardar lectura</button><button id="cancelEdit" class="secondary" style="display:none">Cancelar edición</button></div></div></section>
 <section id="day" class="panel"><div class="card"><h2>Consultar registros por día</h2><div class="grid"><div><label>Fecha</label><input id="qdate" type="date"></div><div><label>Residente</label><input id="qresident" list="residentList" placeholder="Todos"></div></div><div class="actions"><button id="search" class="primary">Buscar</button></div><div id="dayresults"></div></div></section>
-<section id="reports" class="panel"><div class="card"><div class="printhead"><img src="logo.jpg"><h2>Reporte de signos vitales</h2></div><h2 class="no-print">Reportes</h2><div class="grid no-print"><div class="full"><label>Residente</label><input id="rresident" list="residentList" value=""></div><div><label>Desde</label><input id="from" type="date"></div><div><label>Hasta</label><input id="to" type="date"></div></div><div class="actions no-print"><button id="report" class="primary">Ver reporte</button><button onclick="window.print()" class="secondary">Imprimir / Guardar PDF</button></div><div id="reportmeta"></div><div id="reportresults"></div></div></section></section><section id="relevos" class="portal-section" style="display:none!important"><div class="card">
+<section id="reports" class="panel"><div class="card"><div class="printhead"><img src="logo.jpg"><h2>Reporte de signos vitales</h2></div><h2 class="no-print">Reportes</h2><div class="grid no-print"><div class="full"><label for="rresident">Residente</label><div id="reportResidentPicker" class="resident-picker"><div class="resident-input-row"><input id="rresident" autocomplete="off" placeholder="Todos los residentes — escriba para buscar" aria-autocomplete="list" aria-controls="reportResidentDropdown"><button id="reportResidentDropBtn" type="button" class="resident-drop-btn" aria-label="Mostrar residentes" title="Mostrar residentes">▾</button></div><div id="reportResidentDropdown" class="resident-dropdown" role="listbox" style="display:none"></div></div><p class="small">Deje «Todos los residentes» para un reporte general.</p></div><div><label>Desde</label><input id="from" type="date"></div><div><label>Hasta</label><input id="to" type="date"></div></div><div class="actions no-print"><button id="report" class="primary">Ver reporte</button><button onclick="window.print()" class="secondary">Imprimir / Guardar PDF</button></div><div id="reportmeta"></div><div id="reportresults"></div></div></section></section><section id="relevos" class="portal-section" style="display:none!important"><div class="card">
 <h2>Relevos recibidos para revisión</h2>
 <div class="notice alert"><b>VERSIÓN DE PRUEBA — NO UTILIZAR PARA AUTORIZACIONES REALES.</b> Esta sección muestra únicamente solicitudes ficticias recibidas. No permite aprobar salidas ni firmar autorizaciones.</div>
 <p class="small">Los acompañantes completan el formulario mediante el enlace o QR compartido. El personal consulta aquí las solicitudes recibidas.</p>
@@ -148,7 +158,17 @@ body.public-mode .calendar-num{display:block!important;color:#2c2927!important}
 <p class="small"><strong>PRUEBA DE FIRMA QR v1.7.15:</strong> estos QR se pueden escanear y abren una página de trazo táctil de prueba. Son enlaces compartidos, NO individuales ni temporales; el trazo NO se envía a Supabase ni se registra como firma. Los botones nuevos solo preparan registros en Supabase: no generan QR exclusivos ni habilitan firmas. Ninguna autorización se genera aquí.</p>
 <div class="actions"><button type="button" class="secondary" id="relPrintPreview">Vista previa / Imprimir</button><button type="button" class="secondary" id="relReset">Limpiar</button><button type="button" class="primary" id="relGuardarBorrador">Guardar borrador en Supabase</button></div>
 <div id="relStatus" role="status"></div><div class="card" style="margin-top:18px"><h3>Borradores guardados en Supabase</h3><p class="small">Solo se muestran los registros que tu cuenta tiene permiso de consultar. No son autorizaciones.</p><div class="actions"><button type="button" id="relActualizar" class="secondary">Actualizar listado</button></div><div id="relLista"></div></div>
-</div></div></section><section id="visits" class="portal-section"><div id="visitListView" class="card"><div class="resident-toolbar"><div><h2 style="margin:0">Visitas programadas</h2><p class="small">Visitas de la fecha seleccionada, ordenadas por hora.</p></div><div class="actions" style="margin:0"><input id="printVisitDate" type="date" style="width:auto"><button id="printVisitsDay" class="secondary">Imprimir visitas del día</button><button id="openVisitAudit" class="secondary">Imprimir auditoría</button><button id="walkInVisit" class="secondary">Visita sin cita</button><button id="newVisit" class="primary">Nueva visita</button></div></div><div id="hmSolicitudesPanel" class="card" style="margin:16px 0;border:1px solid #d4b46b;background:#fffaf0"><h3>Solicitudes de visitas pendientes</h3><p class="small">Revisar antes de aprobar. La aprobación valida disponibilidad y visitantes no autorizados.</p><button type="button" class="secondary" id="hmSolicitudesActualizar">Actualizar pendientes</button><div id="hmSolicitudesEstado" role="status"></div><div id="hmSolicitudesLista"></div></div><div id="visitAuditPanel" class="hidden no-print" style="border:1px solid #d8c8b5;border-radius:12px;padding:16px;margin:14px 0;background:#fffaf0"><h3 style="margin-top:0">Auditoría de visitas</h3><p class="small">Seleccione un período y un residente, o deje «Todos los residentes» para el informe completo.</p><div class="grid"><div><label for="auditVisitFrom">Desde</label><input type="date" id="auditVisitFrom"></div><div><label for="auditVisitTo">Hasta</label><input type="date" id="auditVisitTo"></div><div class="full"><label for="auditVisitResident">Residente</label><select id="auditVisitResident"><option value="">Todos los residentes</option></select></div></div><div class="actions"><button id="generateVisitAudit" class="primary">Generar / Imprimir auditoría</button><button id="closeVisitAudit" class="secondary">Cerrar</button></div><div id="auditVisitStatus" role="status" class="small"></div></div><div id="allVisitsStatus"></div><div id="visitorsInside" class="inside-box hidden"></div><div id="allVisitsList" class="visit-list"></div></div><div id="walkInCard" class="card walkin-card hidden"><div class="actions" style="margin-top:0"><button id="backWalkIn" class="secondary">← Volver a visitas</button></div><h2>Registrar visita sin cita</h2><div class="grid"><div><label>Residente</label><select id="walkInResident"></select></div><div><label>Nombre del visitante</label><input id="walkInName"></div><div><label>Teléfono</label><input id="walkInPhone" type="tel" maxlength="12"></div><div><label>Relación / parentesco</label><input id="walkInRelation"></div><div class="full"><label>Observaciones</label><textarea id="walkInNotes"></textarea><div id="walkInWarning"></div></div></div><div id="walkInStatus"></div><div class="actions"><button id="saveWalkIn" class="primary">Registrar llegada ahora</button></div></div><div id="visitScheduler" class="hidden"><div class="card"><div class="actions" style="margin-top:0"><button id="backVisits" class="secondary">← Volver a visitas</button></div><h2>Nueva visita</h2><div class="grid"><div><label>Residente</label><select id="visitResident"></select></div><div><label>Fecha solicitada</label><input id="visitDate" type="date"></div><div><label>Duración</label><select id="visitDuration"><option value="30">30 minutos</option><option value="60">1 hora</option></select></div><div style="display:flex;align-items:end"><button id="checkVisits" class="primary" style="width:100%">Ver disponibilidad</button></div></div><div id="visitCapacityInfo" class="small" style="margin-top:10px"></div><div id="visitAvailabilityStatus"></div><div id="visitSlots" class="visit-slots"></div></div><div id="visitBookingCard" class="card hidden"><h2>Registrar visita</h2><div id="visitChosen" class="notice info"></div><div class="grid"><div class="full"><label>Nombre del visitante</label><input id="visitorName"><div id="visitorRestrictionWarning"></div></div><div><label>Teléfono</label><input id="visitorPhone" type="tel" maxlength="12"></div><div><label>Relación / parentesco</label><input id="visitorRelation"></div><div class="full"><label>Observaciones</label><textarea id="visitNotes"></textarea></div></div><div id="visitBookingStatus"></div><div class="actions"><button id="saveVisit" class="primary">Confirmar cita</button><button id="cancelVisitBooking" class="secondary">Cancelar</button></div></div></div></section><section id="employeeReportView" class="portal-section"><div class="card"><div class="actions no-print" style="margin-top:0"><button id="backEmployeeReportView" class="secondary">← Volver a Empleados</button><button id="printEmployeeReportView" class="primary hidden">Imprimir / Guardar PDF</button></div><div id="employeeReportViewOutput"></div></div></section><section id="admin" class="portal-section"><div class="card"><h2>Administración</h2><p class="section-intro">Configuraciones administrativas del Portal Hacienda Margarita.</p><div id="adminMenu" class="actions" style="margin-top:18px;margin-bottom:20px"><button id="openVisitConfig" class="secondary">Configuración de visitas</button><button id="openEmployees" class="secondary">Empleados</button><button id="openPositions" class="secondary">Puestos / Cargos</button></div><div id="visitConfigPanel" class="hidden"><h3>Configuración de visitas</h3><div class="grid"><div><label>Capacidad máxima de visitas simultáneas</label><input id="visitCapacity" type="number" min="1" max="50"></div></div><div class="actions"><button id="saveVisitConfig" class="secondary">Guardar configuración</button><button class="secondary" onclick="showAdminMenu()">← Volver a Administración</button></div><div id="visitConfigStatus"></div></div><div id="employeeAdminHome" class="hidden"><div class="resident-toolbar"><div><h3 style="margin:0">Empleados</h3><p class="small">Administración de expedientes de empleados de Hacienda Margarita.</p></div><div class="actions" style="margin:0"><button id="employeeReportBtn" class="secondary">Reporte de empleados</button><button id="newEmployeeBtn" class="primary">Nuevo empleado</button></div></div><div style="margin-top:14px"><label>Buscar empleado</label><input id="employeeSearch" placeholder="Nombre o puesto/cargo"></div><div id="employeeList" style="margin-top:16px"></div><div id="employeeStatus"></div></div>
+</div></div></section><section id="visits" class="portal-section"><div id="visitListView" class="card"><div class="resident-toolbar"><div><h2 style="margin:0">Visitas programadas</h2><p class="small">Visitas de la fecha seleccionada, ordenadas por hora.</p></div><div class="actions" style="margin:0"><input id="printVisitDate" type="date" style="width:auto"><button id="printVisitsDay" class="secondary">Imprimir visitas del día</button><button id="openVisitAudit" class="secondary">Imprimir auditoría</button><button id="walkInVisit" class="secondary">Visita sin cita</button><button id="newVisit" class="primary">Nueva visita</button></div></div><div id="hmSolicitudesPanel" class="card" style="margin:16px 0;border:1px solid #d4b46b;background:#fffaf0"><h3>Solicitudes de visitas pendientes</h3><p class="small">Revisar antes de aprobar. La aprobación valida disponibilidad y visitantes no autorizados.</p><button type="button" class="secondary" id="hmSolicitudesActualizar">Actualizar pendientes</button><div id="hmSolicitudesEstado" role="status"></div><div id="hmSolicitudesLista"></div></div><div id="visitAuditPanel" class="hidden no-print" style="border:1px solid #d8c8b5;border-radius:12px;padding:16px;margin:14px 0;background:#fffaf0"><h3 style="margin-top:0">Auditoría de visitas</h3><p class="small">Seleccione un período y un residente, o deje «Todos los residentes» para el informe completo.</p><div class="grid"><div><label for="auditVisitFrom">Desde</label><input type="date" id="auditVisitFrom"></div><div><label for="auditVisitTo">Hasta</label><input type="date" id="auditVisitTo"></div><div class="full"><label for="auditVisitResident">Residente</label><select id="auditVisitResident"><option value="">Todos los residentes</option></select></div></div><div class="actions"><button id="generateVisitAudit" class="primary">Generar / Imprimir auditoría</button><button id="closeVisitAudit" class="secondary">Cerrar</button></div><div id="auditVisitStatus" role="status" class="small"></div></div><div id="allVisitsStatus"></div><div id="visitorsInside" class="inside-box hidden"></div><div id="allVisitsList" class="visit-list"></div></div><div id="walkInCard" class="card walkin-card hidden"><div class="actions" style="margin-top:0"><button id="backWalkIn" class="secondary">← Volver a visitas</button></div><h2>Registrar visita sin cita</h2><div class="grid"><div><label>Residente</label><select id="walkInResident"></select></div><div><label>Nombre del visitante</label><input id="walkInName"></div><div><label>Teléfono</label><input id="walkInPhone" type="tel" maxlength="12"></div><div><label>Relación / parentesco</label><input id="walkInRelation"></div><div class="full"><label>Observaciones</label><textarea id="walkInNotes"></textarea><div id="walkInWarning"></div></div></div><div id="walkInStatus"></div><div class="actions"><button id="saveWalkIn" class="primary">Registrar llegada ahora</button></div></div><div id="visitScheduler" class="hidden"><div class="card"><div class="actions" style="margin-top:0"><button id="backVisits" class="secondary">← Volver a visitas</button></div><h2>Nueva visita</h2><div class="grid"><div><label>Residente</label><select id="visitResident"></select></div><div><label>Fecha solicitada</label><input id="visitDate" type="date"></div><div><label>Duración</label><select id="visitDuration"><option value="30">30 minutos</option><option value="60">1 hora</option></select></div><div style="display:flex;align-items:end"><button id="checkVisits" class="primary" style="width:100%">Ver disponibilidad</button></div></div><div id="visitCapacityInfo" class="small" style="margin-top:10px"></div><div id="visitAvailabilityStatus"></div><div id="visitSlots" class="visit-slots"></div></div><div id="visitBookingCard" class="card hidden"><h2>Registrar visita</h2><div id="visitChosen" class="notice info"></div><div class="grid"><div class="full"><label>Nombre del visitante</label><input id="visitorName"><div id="visitorRestrictionWarning"></div></div><div><label>Teléfono</label><input id="visitorPhone" type="tel" maxlength="12"></div><div><label>Relación / parentesco</label><input id="visitorRelation"></div><div class="full"><label>Observaciones</label><textarea id="visitNotes"></textarea></div></div><div id="visitBookingStatus"></div><div class="actions"><button id="saveVisit" class="primary">Confirmar cita</button><button id="cancelVisitBooking" class="secondary">Cancelar</button></div></div></div></section><section id="employeeReportView" class="portal-section"><div class="card"><div class="actions no-print" style="margin-top:0"><button id="backEmployeeReportView" class="secondary">← Volver a Empleados</button><button id="printEmployeeReportView" class="primary hidden">Imprimir / Guardar PDF</button></div><div id="employeeReportViewOutput"></div></div></section><section id="admin" class="portal-section"><div class="card"><h2>Administración</h2><p class="section-intro">Configuraciones administrativas del Portal Hacienda Margarita.</p><div id="adminMenu" class="actions" style="margin-top:18px;margin-bottom:20px"><button id="openVisitConfig" class="secondary">Configuración de visitas</button><button id="openEmployees" class="secondary">Empleados</button><button id="openPositions" class="secondary">Puestos / Cargos</button></div><div id="accountPanel" class="hidden">
+<button type="button" class="secondary" onclick="showAdminMenu()">← Volver a Administración</button>
+
+<form id="createAccountForm" autocomplete="off" hidden><h3>Crear cuenta de personal</h3>
+<label for="accountEmail">Correo electrónico</label><input id="accountEmail" type="email" maxlength="254" required>
+<label for="accountRole">Rol</label><select id="accountRole" required><option value="">Selecciona un rol</option><option value="recepcion">Recepción</option><option value="vitales">Vitales</option></select>
+<label for="accountPassword">Contraseña inicial (mínimo 12 caracteres)</label><input id="accountPassword" type="password" autocomplete="new-password" minlength="12" maxlength="72" required>
+<div class="account-toolbar"><button type="button" id="cancelCreateAccount" class="account-button">Cancelar</button><button type="submit" class="account-button">Crear cuenta</button></div>
+</form>
+<p id="accountStatus" role="status"></p><div class="account-toolbar"><h3>Cuentas existentes</h3><div class="actions"><button id="refreshAccounts" type="button" class="account-button">Actualizar cuentas</button><button id="openCreateAccount" type="button" class="account-button">Crear cuenta</button></div></div><p id="accountListStatus" role="status"></p><div id="accountList"></div><dialog id="accountDialog" aria-labelledby="accountDialogTitle"><h3 id="accountDialogTitle"></h3><p id="accountDialogMessage"></p><form method="dialog"><div id="accountDialogField"></div><div class="account-toolbar"><button type="submit" value="cancel" formnovalidate class="account-button">Cancelar</button><button type="submit" id="accountDialogSubmit" value="confirm" class="account-button"></button></div></form></dialog>
+</div><div id="rolePermissionsPanel" class="hidden"><button type="button" class="secondary" onclick="showAdminMenu()">← Volver a Administración</button><h3>Permisos por rol</h3><p>Los cambios se guardan al marcar o desmarcar cada casilla.</p><div id="rolePermissionsStatus" role="status"></div><div id="rolePermissionsGrid"></div></div><div id="visitConfigPanel" class="hidden"><h3>Configuración de visitas</h3><div class="grid"><div><label>Capacidad máxima de visitas simultáneas</label><input id="visitCapacity" type="number" min="1" max="50"></div></div><div class="actions"><button id="saveVisitConfig" class="secondary">Guardar configuración</button><button class="secondary" onclick="showAdminMenu()">← Volver a Administración</button></div><div id="visitConfigStatus"></div></div><div id="employeeAdminHome" class="hidden"><div class="resident-toolbar"><div><h3 style="margin:0">Empleados</h3><p class="small">Administración de expedientes de empleados de Hacienda Margarita.</p></div><div class="actions" style="margin:0"><button id="employeeReportBtn" class="secondary">Reporte de empleados</button><button id="newEmployeeBtn" class="primary">Nuevo empleado</button></div></div><div style="margin-top:14px"><label>Buscar empleado</label><input id="employeeSearch" placeholder="Nombre o puesto/cargo"></div><div id="employeeList" style="margin-top:16px"></div><div id="employeeStatus"></div></div>
 <div id="employeePositionsCard" class="hidden"><div class="actions"><button class="secondary" onclick="showAdminMenu()">← Volver a Administración</button></div><h3>Puestos / Cargos</h3><p class="small">Catálogo uniforme para los empleados.</p><div class="grid"><div><label>Nuevo puesto / cargo</label><input id="newPositionName"></div></div><div class="actions"><button id="addPositionBtn" class="primary">Añadir puesto</button></div><div id="positionsStatus"></div><div id="positionsList"></div></div><div id="employeeFormCard" class="hidden"><div class="actions" style="margin-top:0"><button id="backEmployeeForm" class="secondary">← Volver a empleados</button></div><h3 id="employeeFormTitle">Nuevo empleado</h3><div class="grid"><div class="full"><label>Nombre completo</label><input id="empName"></div><div><label>Puesto / cargo</label><select id="empPosition"></select></div><div><label>Turno</label><select id="empShift"><option value="">— Seleccione —</option><option>Primero</option><option>Segundo</option><option>Tercero</option><option>Fines de Semana</option></select></div><div><label>Estado</label><select id="empState"><option>Activo</option><option>Inactivo</option></select></div><div><label>Teléfono</label><input id="empPhone" type="tel" inputmode="numeric" maxlength="12" placeholder="787-555-5555"></div><div><label>Email</label><input id="empEmail" type="email"></div><div><label>Fecha de ingreso</label><input id="empAdmission" type="date"></div><div class="full"><label>Cualificaciones / certificaciones</label><textarea id="empQualifications" rows="4"></textarea></div><div class="full"><label>Observaciones</label><textarea id="empNotes" rows="4"></textarea></div></div><div class="actions"><button id="saveEmployee" class="primary">Guardar empleado</button><button id="cancelEmployee" class="secondary">Cancelar</button></div><div id="employeeFormStatus"></div></div>
 <div id="employeeDetailCard" class="hidden"></div>
 <div id="employeeReportCard" class="hidden"><div class="actions no-print" style="margin-top:0"><button id="backEmployeeReport" class="secondary">← Volver a empleados</button></div><h3>Reporte de Empleados</h3><div class="grid no-print"><div><label>Mostrar</label><select id="employeeReportFilter"><option value="Todos">Todos</option><option value="Activo">Activos</option><option value="Inactivo">Inactivos</option></select></div></div><div class="actions no-print"><button id="generateEmployeeReport" class="secondary">Generar reporte</button><button id="printEmployeeReport" class="primary hidden">Imprimir / Guardar PDF</button></div><div id="employeeReportOutput"></div></div></div></section><section id="activities" class="portal-section"><div id="activityCalendarCard" class="card"><div class="resident-toolbar" style="align-items:flex-start;margin-bottom:28px"><div><h2 style="margin:0">Calendario de Actividades</h2><p class="small">Seleccione un día para ver sus actividades.</p></div><div class="actions" style="margin:0"><button id="activityMonthListBtn" class="secondary">Ver actividades del mes</button><button id="activityReportBtn" class="secondary">Reporte de actividades</button><button id="newActivityBtn" class="primary hidden">Nueva actividad</button></div></div><div class="calendar-head"><button id="activityPrevMonth" class="secondary">← Mes anterior</button><div id="activityMonthTitle" class="calendar-title"></div><div class="actions" style="margin:0"><button id="activityToday" class="secondary">Hoy</button><button id="activityNextMonth" class="secondary">Mes siguiente →</button></div></div><div class="calendar-grid"><div class="calendar-dow">Dom</div><div class="calendar-dow">Lun</div><div class="calendar-dow">Mar</div><div class="calendar-dow">Mié</div><div class="calendar-dow">Jue</div><div class="calendar-dow">Vie</div><div class="calendar-dow">Sáb</div></div><div id="activityCalendar" class="calendar-grid"></div><div id="activityDayBox" style="margin-top:18px"></div><div id="activitySeriesChoice" class="hidden"></div></div><div id="activityMonthListCard" class="card hidden"><div class="actions" style="margin-top:0"><button id="backActivityCalendar" class="secondary">← Volver al calendario</button></div><h2 id="activityListTitle">Actividades del mes</h2><div id="activityMonthList"></div><div id="activityMonthSeriesChoice" class="hidden"></div></div><div id="activityReportCard" class="card hidden"><div class="actions no-print" style="margin-top:0"><button id="backActivityReport" class="secondary">← Volver al calendario</button></div><h2>Reporte de Actividades</h2><div class="grid no-print"><div><label>Desde</label><input id="activityReportFrom" type="date"></div><div><label>Hasta</label><input id="activityReportTo" type="date"></div></div><div class="actions no-print"><button id="generateActivityReport" class="secondary">Generar reporte</button><button id="printActivityReport" class="primary hidden">Imprimir / Guardar PDF</button></div><div id="activityReportStatus" class="no-print"></div><div id="activityReportOutput"></div></div><div id="activityFormCard" class="card hidden"><div class="actions" style="margin-top:0"><button id="backActivityForm" class="secondary">← Volver al calendario</button></div><h2 id="activityFormTitle">Nueva actividad</h2><div class="grid"><div class="full"><label>Título</label><input id="activityTitle"></div><div><label>Fecha</label><input id="activityDate" type="date"></div><div><label>Hora de inicio</label><select id="activityStart"></select></div><div><label>Hora de finalización</label><select id="activityEnd"></select></div><div><label>Lugar</label><input id="activityPlace"></div><div class="full"><label>Descripción / observaciones</label><textarea id="activityNotes"></textarea></div><div><label>Visible al público</label><select id="activityPublic"><option value="false">No</option><option value="true">Sí</option></select></div><div class="full"><label style="display:flex;align-items:center;gap:8px"><input id="activityRecurring" type="checkbox" style="width:auto"> Actividad periódica</label></div><div id="activityRecurringBox" class="full hidden"><div class="notice"><b>Repetir los días:</b><div class="actions" style="margin:10px 0"><label><input type="checkbox" class="activityWeekday" value="1" style="width:auto"> Lun</label><label><input type="checkbox" class="activityWeekday" value="2" style="width:auto"> Mar</label><label><input type="checkbox" class="activityWeekday" value="3" style="width:auto"> Mié</label><label><input type="checkbox" class="activityWeekday" value="4" style="width:auto"> Jue</label><label><input type="checkbox" class="activityWeekday" value="5" style="width:auto"> Vie</label><label><input type="checkbox" class="activityWeekday" value="6" style="width:auto"> Sáb</label><label><input type="checkbox" class="activityWeekday" value="0" style="width:auto"> Dom</label></div><label>Repetir hasta</label><input id="activityRepeatUntil" type="date"></div></div></div><div id="activityFormStatus"></div><div class="actions"><button id="saveActivity" class="primary">Guardar actividad</button><button id="cancelActivity" class="secondary">Cancelar</button></div></div></section><section id="news" class="portal-section">
@@ -182,7 +202,8 @@ body.public-mode .calendar-num{display:block!important;color:#2c2927!important}
   <footer>Hacienda Margarita · Las Piedras · Tel. 787-405-2020</footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><script>
 const $=x=>document.getElementById(x);
-function portalDialog(message,{title='Hacienda Margarita',confirmMode=false}={}){
+function portalDialog(message,{title='Hacienda Margarita',confirmMode=false,tone=''}={}){
+ $('portalDialog').dataset.tone=tone;
  return new Promise(resolve=>{ $('portalDialogTitle').textContent=title;$('portalDialogMessage').textContent=message;$('portalDialogCancel').style.display=confirmMode?'inline-block':'none';$('portalDialog').style.display='flex';
  const finish=v=>{$('portalDialog').style.display='none';$('portalDialogOk').onclick=null;$('portalDialogCancel').onclick=null;resolve(v)};
  $('portalDialogOk').onclick=()=>finish(true);$('portalDialogCancel').onclick=()=>finish(false);});
@@ -202,12 +223,12 @@ function cfg(){return {url:SUPABASE_URL,key:SUPABASE_KEY}}
 async function loadRole(){try{let rows=await api('perfiles?select=rol&user_id=eq.'+JSON.parse(atob(token.split('.')[1])).sub);isAdmin=rows.length>0&&rows[0].rol==='admin';}catch(e){isAdmin=false;}}  
 function showLogin(){$('loginCard').style.display='block';$('appnav').style.display='none';$('appbody').style.display='none';$('appNotice').style.display='none'}
 function showApp(){if($('newsStatus'))$('newsStatus').innerHTML='';$('loginCard').style.display='none';$('appnav').style.display='flex';$('appbody').style.display='block';$('appNotice').style.display='block';$('adminNav').classList.toggle('hidden',!isAdmin);$('newActivityBtn').classList.toggle('hidden',!isAdmin);$('newNewsBtn').classList.toggle('hidden',!isAdmin);names()}
-$('login').onclick=async()=>{let c=cfg(),email=$('email').value.trim(),password=$('password').value;if(!email||!password){await portalAlert('Escriba correo electrónico y contraseña.');return}$('loginstatus').innerHTML='<p class="small">Conectando…</p>';try{let r=await fetch(c.url+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json','apikey':c.key},body:JSON.stringify({email,password})});let j=await r.json();if(!r.ok)throw new Error(j.msg||j.error_description||j.message||'No se pudo iniciar sesión');token=j.access_token;sessionStorage.setItem('hm_prod_token',token);$('password').value='';await loadRole();document.body.classList.remove('public-mode');document.querySelectorAll('#home .module-card').forEach(card=>card.style.display='');showApp()}catch(e){$('loginstatus').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
+$('login').onclick=async()=>{let c=cfg(),email=$('email').value.trim(),password=$('password').value;if(!email||!password){await portalAlert('Escriba correo electrónico y contraseña.');return}$('loginstatus').innerHTML='<p class="small">Conectando…</p>';try{let r=await fetch(c.url+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json','apikey':c.key},body:JSON.stringify({email,password})});let j=await r.json();if(!r.ok)throw new Error(j.msg||j.error_description||j.message||'No se pudo iniciar sesión');token=j.access_token;sessionStorage.setItem('hm_prod_token',token);$('password').value='';await loadRole();if(!token)throw new Error('La cuenta no tiene acceso al portal.');document.body.classList.remove('public-mode');document.querySelectorAll('#home .module-card').forEach(card=>card.style.display='');showApp()}catch(e){$('loginstatus').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
 $('logout').onclick=()=>{sessionStorage.removeItem('hm_prod_token');token='';isAdmin=false;enterPublicMode();};
 async function api(path,opt={}){let c=cfg();let fetchOpt={...opt};if(fetchOpt.body!=null && typeof fetchOpt.body!=='string' && !(fetchOpt.body instanceof FormData) && !(fetchOpt.body instanceof Blob))fetchOpt.body=JSON.stringify(fetchOpt.body);let r=await fetch(c.url+'/rest/v1/'+path,{...fetchOpt,headers:{'apikey':c.key,'Authorization':'Bearer '+token,'Content-Type':'application/json','Prefer':opt.prefer||'',...(opt.headers||{})}});if(r.status===401){sessionStorage.removeItem('hm_prod_token');token='';isAdmin=false;enterPublicMode();throw new Error('La sesión terminó. Inicie sesión nuevamente.')}if(!r.ok){let t=await r.text();throw new Error(t||'Error al comunicarse con la base de datos.')}if(r.status===204)return null;let t=await r.text();return t?JSON.parse(t):null}
 async function getRows(query=''){return await api('presiones?select=id,created_at,residente,fecha,turno,sistolica,diastolica,pulso,temperatura_f,hora,observaciones'+query)}
 let activeResidentNames=[];
-async function names(){try{let rows=await api('residentes?select=nombre_completo,estado&estado=eq.Activo&order=nombre_completo.asc');activeResidentNames=[...new Set((rows||[]).map(x=>x.nombre_completo).filter(Boolean))];renderResidentDropdown($('resident')?.value||'',false)}catch(e){console.error(e)}}
+async function names(){try{let rows=await api('residentes?select=nombre_completo,estado&estado=eq.Activo&order=nombre_completo.asc');activeResidentNames=[...new Set((rows||[]).map(x=>x.nombre_completo).filter(Boolean))];renderResidentDropdown($('resident')?.value||'',false);renderReportResidentDropdown('',false)}catch(e){console.error(e)}}
 function renderResidentDropdown(filter='',show=true){
  const box=$('residentDropdown'); if(!box)return;
  const q=(filter||'').trim().toLocaleLowerCase('es');
@@ -216,10 +237,20 @@ function renderResidentDropdown(filter='',show=true){
  box.style.display=show?'block':'none';
  box.querySelectorAll('.resident-option').forEach(b=>b.onclick=()=>{ $('resident').value=b.dataset.resident; box.style.display='none'; $('resident').focus(); });
 }
+function renderReportResidentDropdown(filter='',show=true){
+ const box=$('reportResidentDropdown');if(!box)return;
+ const q=(filter||'').trim().toLocaleLowerCase('es');
+ const matches=activeResidentNames.filter(n=>!q||n.toLocaleLowerCase('es').includes(q));
+ box.innerHTML='<button type="button" class="resident-option" data-all="true">Todos los residentes</button>'+
+ (matches.length?matches.map(n=>`<button type="button" class="resident-option" data-resident="${esc(n)}">${esc(n)}</button>`).join(''):'<div class="resident-empty">No se encontraron residentes activos.</div>');
+ box.style.display=show?'block':'none';
+ box.querySelectorAll('.resident-option').forEach(b=>b.onclick=()=>{ $('rresident').value=b.dataset.all?'':b.dataset.resident;box.style.display='none';$('rresident').focus();});
+}
+function closeReportResidentDropdown(){if($('reportResidentDropdown'))$('reportResidentDropdown').style.display='none'}
 function closeResidentDropdown(){if($('residentDropdown'))$('residentDropdown').style.display='none'}
 
 function flag(s,d){s=+s;d=+d;if(s<=90||d<=60)return['Lectura baja','alert'];if(s>=180||d>=120)return['Lectura alta','alert'];return['Lectura registrada dentro de los límites generales configurados','ok']}
-function live(){if(!$('sys').value||!$('dia').value){$('status').innerHTML='';return}let f=flag($('sys').value,$('dia').value);$('status').innerHTML=`<div class="notice ${f[1]}">${f[0]}: ${$('sys').value}/${$('dia').value} mmHg</div>`}$('sys').oninput=$('dia').oninput=live;
+function live(){if(!$('sys').value||!$('dia').value){$('status').innerHTML='';return}let f=flag($('sys').value,$('dia').value);$('status').innerHTML=`<div class="notice ${f[1]}">${f[1]==='ok'?'Lectura dentro de los límites generales configurados (sin guardar)':f[0]+' (sin guardar)'}: ${$('sys').value}/${$('dia').value} mmHg</div>`}$('sys').oninput=$('dia').oninput=live;
 let editingId=null;
 let editingDeleteId=null;
   function resetEntry(){
@@ -241,7 +272,13 @@ $('residentDropBtn').onclick=e=>{e.preventDefault();e.stopPropagation();let open
 document.addEventListener('click',e=>{if(!$('residentPicker').contains(e.target))closeResidentDropdown()});
 $('resident').addEventListener('keydown',e=>{if(e.key==='Escape')closeResidentDropdown()});
 
+$('rresident').addEventListener('input',()=>renderReportResidentDropdown($('rresident').value,true));
+$('rresident').addEventListener('focus',()=>renderReportResidentDropdown($('rresident').value,true));
+$('reportResidentDropBtn').onclick=e=>{e.preventDefault();e.stopPropagation();const open=$('reportResidentDropdown').style.display==='block';renderReportResidentDropdown('',!open)};
+document.addEventListener('click',e=>{if(!$('reportResidentPicker').contains(e.target))closeReportResidentDropdown()});
+$('rresident').addEventListener('keydown',e=>{if(e.key==='Escape')closeReportResidentDropdown()});
 $('save').onclick=async()=>{
+  if(!await requireRolePermission(editingId?'vitales_editar':'vitales_registrar',editingId?'editar lecturas guardadas':'registrar lecturas de signos vitales'))return;
   let residente=$('resident').value.trim(),sistolica=+$('sys').value,diastolica=+$('dia').value;
   if(!residente||!$('date').value||!sistolica||!diastolica){await portalAlert('Complete residente, fecha, sistólica y diastólica.');return}
   let rawTemp=$('temperature').value.trim();
@@ -250,7 +287,8 @@ $('save').onclick=async()=>{
    let data={residente,fecha:$('date').value,turno:$('shift').value,sistolica,diastolica,pulso:$('pulse').value?+$('pulse').value:null,temperatura_f:tempF,hora:$('time').value||null,observaciones:$('notes').value.trim()||null};
   try{
     if(editingId){
-      await api('presiones?id=eq.'+editingId,{method:'PATCH',prefer:'return=minimal',body:JSON.stringify(data)});
+      const updated=await api('presiones?id=eq.'+editingId,{method:'PATCH',prefer:'return=representation',body:JSON.stringify(data)});
+      if(updated?.length!==1)throw new Error('El cambio no se guardó. Comprueba el permiso de edición.');
       resetEntry();
       $('status').innerHTML='<div class="notice ok" role="status">✓ Lectura actualizada correctamente.</div>';
       names();
@@ -268,11 +306,18 @@ $('save').onclick=async()=>{
     $('notes').value='';
     $('status').innerHTML='<div class="notice ok" role="status">✓ Lectura guardada correctamente.</div>';
     names();
-  }catch(e){await portalAlert((editingId?'No se pudo actualizar: ':'No se pudo guardar: ')+e.message)}
+  }catch(e){
+    let code;
+    try { code = JSON.parse(e.message).code; } catch {}
+    const message = code === '42501'
+      ? 'Tu cuenta no tiene permiso para ' + (editingId ? 'editar' : 'registrar') + ' lecturas de signos vitales. Pide a un administrador que revise tu rol.'
+      : 'Revisa tu conexión y los datos de la lectura. Si el problema continúa, comunícalo a un administrador.';
+    await portalDialog(message, {title: 'La lectura no se guardó', tone: 'warning'});
+  }
 };
-function table(rows,withActions=false){
+function table(rows,withActions=false,canDelete=isAdmin){
   if(!rows.length)return'<p>No hay registros para esos criterios.</p>';
-  return `<table><thead><tr><th>Fecha</th><th>Residente</th><th>Turno</th><th>Presión</th><th>Pulso</th><th>Temperatura (°F)</th><th>Estado</th><th>Observaciones</th>${withActions?'<th class="no-print">Acciones</th>':''}</tr></thead><tbody>${rows.map(r=>{let f=flag(r.sistolica,r.diastolica);return `<tr><td>${r.fecha}<br><span class="small">${esc(fmtTime(r.hora))}</span></td><td>${esc(r.residente)}</td><td>${esc(r.turno)}</td><td><b>${r.sistolica}/${r.diastolica}</b></td><td>${esc(r.pulso??'—')}</td><td>${r.temperatura_f==null?'—':esc(Number(r.temperatura_f).toFixed(1))+' °F'}</td><td>${f[0]}</td><td>${esc(r.observaciones||'')}</td>${withActions?`<td class="no-print"><div class="actions"><button class="editbtn" onclick="editReading(${r.id})">Editar</button><button class="deletebtn" onclick="deleteReading(${r.id})">Eliminar</button></div></td>`:''}</tr>`}).join('')}</tbody></table>`
+  return `<table><thead><tr><th>Fecha</th><th>Residente</th><th>Turno</th><th>Presión</th><th>Pulso</th><th>Temperatura (°F)</th><th>Estado</th><th>Observaciones</th>${withActions?'<th class="no-print">Acciones</th>':''}</tr></thead><tbody>${rows.map(r=>{let f=flag(r.sistolica,r.diastolica);return `<tr><td>${r.fecha}<br><span class="small">${esc(fmtTime(r.hora))}</span></td><td>${esc(r.residente)}</td><td>${esc(r.turno)}</td><td><b>${r.sistolica}/${r.diastolica}</b></td><td>${esc(r.pulso??'—')}</td><td>${r.temperatura_f==null?'—':esc(Number(r.temperatura_f).toFixed(1))+' °F'}</td><td>${f[0]}</td><td>${esc(r.observaciones||'')}</td>${withActions?`<td class="no-print"><div class="actions"><button class="editbtn" onclick="editReading(${r.id})">Editar</button>${canDelete?`<button class="deletebtn" onclick="deleteReading(${r.id})">Eliminar</button>`:""}</div></td>`:''}</tr>`}).join('')}</tbody></table>`
 }
 let lastDayRows=[];
 function activateTab(id){
@@ -281,7 +326,8 @@ function activateTab(id){
   let b=document.querySelector(`#pressureNav button[data-tab="${id}"]`);if(b)b.classList.add('active');
   $(id).classList.add('active');
 }
-function editReading(id){
+async function editReading(id){
+  if(!await requireRolePermission('vitales_editar','editar lecturas guardadas'))return;
   let r=lastDayRows.find(x=>x.id===id); if(!r)return;
   editingId=id;
   $('resident').value=r.residente||'';
@@ -312,8 +358,8 @@ async function deleteReading(id){
 $('cancelDelete').onclick=()=>{$('deleteModal').style.display='none';editingDeleteId=null;};
   
 $('confirmDelete').onclick=async()=>{try{await api('presiones?id=eq.'+editingDeleteId,{method:'DELETE',prefer:'return=minimal'});$('deleteModal').style.display='none';editingDeleteId=null;await $('search').onclick();$('dayresults').insertAdjacentHTML('afterbegin','<div class="notice ok">Lectura eliminada correctamente.</div>');names();}catch(e){await portalAlert('No se pudo eliminar: '+e.message)}};
-$('search').onclick=async()=>{try{let q=`&fecha=eq.${$('qdate').value}&order=hora.asc`;let p=$('qresident').value.trim();if(p)q+=`&residente=ilike.*${encodeURIComponent(p)}*`;lastDayRows=await getRows(q);$('dayresults').innerHTML=table(lastDayRows,isAdmin)}catch(e){$('dayresults').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
-$('report').onclick=async()=>{try{let p=$('rresident').value.trim(),f=$('from').value,t=$('to').value,q=`&fecha=gte.${f}&fecha=lte.${t}&order=fecha.asc,hora.asc`;if(p)q+=`&residente=ilike.*${encodeURIComponent(p)}*`;let r=await getRows(q);$('reportmeta').innerHTML=`<p><b>Residente:</b> ${esc(p||'Todos')} &nbsp; <b>Período:</b> ${f} a ${t}</p>`;$('reportresults').innerHTML=table(r)}catch(e){$('reportresults').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
+$('search').onclick=async()=>{if(!await requireRolePermission('vitales_consultar','consultar lecturas de signos vitales')){$('dayresults').replaceChildren();return}try{let q=`&fecha=eq.${$('qdate').value}&order=hora.asc`;let p=$('qresident').value.trim();if(p)q+=`&residente=ilike.*${encodeURIComponent(p)}*`;lastDayRows=await getRows(q);const canEdit=isAdmin||(await api('rpc/hm_tiene_permiso',{method:'POST',body:{p_funcion:'vitales_editar'}}))===true;$('dayresults').innerHTML=table(lastDayRows,canEdit,isAdmin)}catch(e){$('dayresults').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
+$('report').onclick=async()=>{if(!await requireRolePermission('vitales_consultar','consultar reportes de signos vitales')){$('reportresults').replaceChildren();$('reportmeta').replaceChildren();return}try{let p=$('rresident').value.trim(),f=$('from').value,t=$('to').value;if(p&&!activeResidentNames.some(n=>n.toLocaleLowerCase('es')===p.toLocaleLowerCase('es')))throw new Error('Seleccione un residente de la lista o deje el campo vacío para todos.');let q=`&fecha=gte.${f}&fecha=lte.${t}&order=fecha.asc,hora.asc`;if(p)q+=`&residente=ilike.*${encodeURIComponent(p)}*`;let r=await getRows(q);$('reportmeta').innerHTML=`<p><b>Residente:</b> ${esc(p||'Todos')} &nbsp; <b>Período:</b> ${f} a ${t}</p>`;$('reportresults').innerHTML=table(r)}catch(e){$('reportresults').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
 
 // ===== Residentes v1.1 =====
 let residentRows=[], editingResidentId=null, currentPhotoPath=null, deletingResidentId=null;
@@ -451,9 +497,9 @@ async function showVisitsList(){
  $('allVisitsList').innerHTML=ds.length?ds.map(d=>`<div><h3>${fmtDate(d)}</h3>${g[d].map(v=>`<div class="visit-item"><b>${v.tipo_visita==='Sin cita'?(v.hora_llegada?'Llegó '+clock(v.hora_llegada):clock(v.hora_inicio))+(v.hora_salida?' · Salió '+clock(v.hora_salida):''):clock(v.hora_inicio)+'–'+clock(mt(tm(v.hora_inicio)+v.duracion_minutos))}</b> · ${esc(map[String(v.residente_id)]?.nombre_completo||'Residente')} ${badge(v)}<div class="small">${esc(v.visitante_nombre)} · ${v.duracion_minutos} min${v.tipo_visita==='Sin cita'?' · Sin cita':''}${v.hora_llegada?' · Llegó '+clock(v.hora_llegada):''}${v.hora_salida?' · Salió '+clock(v.hora_salida):''}</div><div class="actions">${v.estado==='Confirmada'?`<button class="primary" onclick="registerVisitArrival('${v.id}')">Registrar llegada</button><button class="secondary" onclick="markVisitNoShow('${v.id}')">No se presentó</button><button class="editbtn" onclick="cancelScheduledVisit('${v.id}')">Cancelar cita</button><button class="secondary" onclick="editScheduledVisit('${v.id}')">Editar</button>`:''}${v.estado==='En la Hacienda'?`<button class="secondary" onclick="openVisitSignature('${v.id}')">Firma QR</button><button class="primary" onclick="registerVisitDeparture('${v.id}')">Registrar salida</button>`:''}${isAdmin?`<button class="deletebtn" onclick="deleteScheduledVisit('${v.id}')">Eliminar</button>`:''}</div></div>`).join('')}</div>`).join(''):'<p class="small">No hay visitas registradas.</p>';
 }
 function localTimeHHMM(){let d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
-window.registerVisitArrival=async id=>{let t=localTimeHHMM();if(!(await portalConfirm(`Registrar llegada a las ${clock(t)}?`,'Registrar llegada')))return;try{await api(`visitas?id=eq.${id}`,{method:'PATCH',body:{estado:'En la Hacienda',hora_llegada:t},prefer:'return=minimal'});await showVisitsList()}catch(e){await portalAlert('No se pudo registrar la llegada: '+e.message)}};
-window.registerVisitDeparture=async id=>{let t=localTimeHHMM();if(!(await portalConfirm(`Registrar salida a las ${clock(t)}?`,'Registrar salida')))return;try{await api(`visitas?id=eq.${id}`,{method:'PATCH',body:{estado:'Finalizada',hora_salida:t},prefer:'return=minimal'});await showVisitsList()}catch(e){await portalAlert('No se pudo registrar la salida: '+e.message)}};
-window.markVisitNoShow=async id=>{if(!(await portalConfirm('¿Marcar esta visita como “No se presentó”?','No se presentó')))return;try{await api(`visitas?id=eq.${id}`,{method:'PATCH',body:{estado:'No se presentó'},prefer:'return=minimal'});await showVisitsList()}catch(e){await portalAlert(e.message)}};
+window.registerVisitArrival=async id=>{if(!await requireRolePermission('visitas_llegada_salida','registrar la llegada'))return;let t=localTimeHHMM();if(!(await portalConfirm(`Registrar llegada a las ${clock(t)}?`,'Registrar llegada')))return;try{await api(`visitas?id=eq.${id}`,{method:'PATCH',body:{estado:'En la Hacienda',hora_llegada:t},prefer:'return=minimal'});await showVisitsList()}catch(e){await portalAlert('No se pudo registrar la llegada: '+e.message)}};
+window.registerVisitDeparture=async id=>{if(!await requireRolePermission('visitas_llegada_salida','registrar la salida'))return;let t=localTimeHHMM();if(!(await portalConfirm(`Registrar salida a las ${clock(t)}?`,'Registrar salida')))return;try{await api(`visitas?id=eq.${id}`,{method:'PATCH',body:{estado:'Finalizada',hora_salida:t},prefer:'return=minimal'});await showVisitsList()}catch(e){await portalAlert('No se pudo registrar la salida: '+e.message)}};
+window.markVisitNoShow=async id=>{if(!isAdmin){await portalDialog('Esta acción está reservada al rol Admin.',{title:'Acceso restringido',tone:'warning'});return;}if(!(await portalConfirm('¿Marcar esta visita como “No se presentó”?','No se presentó')))return;try{await api(`visitas?id=eq.${id}`,{method:'PATCH',body:{estado:'No se presentó'},prefer:'return=minimal'});await showVisitsList()}catch(e){await portalAlert(e.message)}};
 function resetVisitForm(){
  editingVisitId=null;selectedVisitStart=null;
  $('visitResident').value='';$('visitDate').value='';$('visitDuration').value='30';
@@ -462,14 +508,28 @@ function resetVisitForm(){
  $('visitBookingCard').classList.add('hidden');
  $('saveVisit').textContent='Confirmar cita';
 }
-$('newVisit').onclick=()=>{resetVisitForm();$('visitListView').classList.add('hidden');$('visitScheduler').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})};
+async function requireRolePermission(permission, action, quiet = false) {
+    if (isAdmin) return true;
+    let allowed;
+    try {
+        allowed = await api('rpc/hm_tiene_permiso', {method:'POST',body:{p_funcion:permission}});
+    } catch {
+        if (!quiet && token) await portalDialog('Vuelve a intentarlo en unos momentos.', {title:'No se pudo comprobar el acceso',tone:'warning'});
+        return false;
+    }
+    if (allowed === true) return true;
+    if (!quiet) await portalDialog('Tu rol no tiene permiso para ' + action + '. Pide a un administrador que revise tus permisos.', {title:'Acceso restringido',tone:'warning'});
+    return false;
+}
+
+$('newVisit').onclick=async()=>{if(!await requireRolePermission('visitas_crear','crear una visita'))return;resetVisitForm();$('visitListView').classList.add('hidden');$('visitScheduler').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})};
 $('backVisits').onclick=()=>{resetVisitForm();showVisitsList()};
 async function loadVisitDay(){let d=$('visitDate').value;visitRows=d?await api(`visitas?select=id,residente_id,fecha,hora_inicio,duracion_minutos,visitante_nombre,estado&fecha=eq.${d}&order=hora_inicio.asc`):[]}
 function avail(t,dur,rid){if(tm(t)+dur>1020)return[false,'Fuera de horario'];let a=visitRows.filter(v=>v.estado!=='Cancelada'&&String(v.id)!==String(editingVisitId||''));if(a.some(v=>String(v.residente_id)===String(rid)&&ov(t,dur,v.hora_inicio,v.duracion_minutos)))return[false,'Residente ocupado'];for(let m=tm(t);m<tm(t)+dur;m+=30)if(a.filter(v=>ov(mt(m),30,v.hora_inicio,v.duracion_minutos)).length>=Number(visitConfig.capacidad_maxima))return[false,'Capacidad completa'];return[true,'Disponible']}
 async function checkVisitAvailability(){let rid=$('visitResident').value,dur=+$('visitDuration').value;if(!rid)return $('visitAvailabilityStatus').innerHTML='<div class="notice alert">Seleccione un residente.</div>';await loadVisitDay();$('visitBookingCard').classList.add('hidden');$('visitSlots').innerHTML=visitTimes.map(t=>{let [ok,why]=avail(t,dur,rid);return `<button class="visit-slot ${ok?'available':'full'}" ${ok?`onclick="chooseVisitSlot('${t}')"`:'disabled'}><span>${clock(t)}</span><small style="display:block;margin-top:6px">${why}</small></button>`}).join('')}
 window.chooseVisitSlot=t=>{selectedVisitStart=t;let r=residentRows.find(x=>String(x.id)===String($('visitResident').value)),d=+$('visitDuration').value;$('visitChosen').innerHTML=`<b>${esc(r?.nombre_completo||'')}</b><br>${fmtDate($('visitDate').value)} · ${clock(t)}–${clock(mt(tm(t)+d))}`;$('visitBookingCard').classList.remove('hidden')};
 $('visitorPhone').oninput=e=>e.target.value=formatPhone(e.target.value);$('checkVisits').onclick=checkVisitAvailability;$('cancelVisitBooking').onclick=()=>{$('visitBookingCard').classList.add('hidden');selectedVisitStart=null};
-window.editScheduledVisit=async id=>{
+window.editScheduledVisit=async id=>{if(!isAdmin){await portalDialog('Esta acción está reservada al rol Admin.',{title:'Acceso restringido',tone:'warning'});return;}
  try{
   let rows=await api(`visitas?select=id,residente_id,fecha,hora_inicio,duracion_minutos,visitante_nombre,visitante_telefono,visitante_parentesco,observaciones,estado&id=eq.${id}`);
   let v=rows?.[0];if(!v)return;
@@ -484,16 +544,16 @@ window.editScheduledVisit=async id=>{
   window.scrollTo({top:0,behavior:'smooth'});
  }catch(e){$('allVisitsStatus').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}
 };
-$('walkInVisit').onclick=async()=>{await loadVisitResidents();$('walkInResident').innerHTML=$('visitResident').innerHTML;$('visitListView').classList.add('hidden');$('visitScheduler').classList.add('hidden');$('walkInCard').classList.remove('hidden');['walkInName','walkInPhone','walkInRelation','walkInNotes'].forEach(x=>$(x).value='');$('walkInResident').value='';$('walkInWarning').innerHTML='';$('walkInStatus').innerHTML='';window.scrollTo({top:0,behavior:'smooth'})};
+$('walkInVisit').onclick=async()=>{if(!await requireRolePermission('visitas_crear','crear una visita sin cita'))return;if(!await requireRolePermission('visitas_llegada_salida','registrar la llegada de una visita sin cita'))return;await loadVisitResidents();$('walkInResident').innerHTML=$('visitResident').innerHTML;$('visitListView').classList.add('hidden');$('visitScheduler').classList.add('hidden');$('walkInCard').classList.remove('hidden');['walkInName','walkInPhone','walkInRelation','walkInNotes'].forEach(x=>$(x).value='');$('walkInResident').value='';$('walkInWarning').innerHTML='';$('walkInStatus').innerHTML='';window.scrollTo({top:0,behavior:'smooth'})};
 $('backWalkIn').onclick=()=>showVisitsList();$('walkInPhone').oninput=e=>e.target.value=formatPhone(e.target.value);
 $('saveWalkIn').onclick=async()=>{let rid=$('walkInResident').value,n=$('walkInName').value.trim();$('walkInWarning').innerHTML='';if(!rid||!n)return $('walkInStatus').innerHTML='<div class="notice alert">Seleccione residente y escriba el nombre del visitante.</div>';try{let restriction=await checkRestrictedVisitor(rid,n);if(restriction.type!=='none'){let exact=restriction.type==='exact';$('walkInWarning').innerHTML=`<div class="notice alert" style="margin-top:10px"><b>${exact?'Visita no permitida.':'⚠ Posible persona no autorizada'}</b><br>${esc(n)} ${exact?'figura':'es parecido a '+esc(restriction.match)+', quien figura'} como persona no autorizada para este residente.${exact?'':' Verifique la identidad antes de continuar.'}</div>`;if(exact)return;if(!(await portalConfirm('El nombre es parecido a una persona no autorizada. ¿Continuar después de verificar la identidad?','Verificar visitante')))return}let now=new Date(),date=today(),t=localTimeHHMM();let payload={residente_id:rid,fecha:date,hora_inicio:t,duracion_minutos:60,visitante_nombre:n,visitante_telefono:$('walkInPhone').value||null,visitante_parentesco:$('walkInRelation').value||null,observaciones:$('walkInNotes').value||null,estado:'En la Hacienda',hora_llegada:t,tipo_visita:'Sin cita'};await api('visitas',{method:'POST',body:payload,prefer:'return=minimal'});await showVisitsList()}catch(e){$('walkInStatus').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
 async function checkRestrictedVisitor(rid,n){let rows=await api(`residentes_no_autorizados?select=nombre_completo&residente_id=eq.${rid}&estado=eq.Activo`);let exact=rows.find(x=>normName(x.nombre_completo)===normName(n));if(exact)return{type:'exact',match:exact.nombre_completo};let ranked=rows.map(x=>({name:x.nombre_completo,score:nameSimilarity(n,x.nombre_completo)})).sort((a,b)=>b.score-a.score),near=ranked[0];return near&&near.score>=0.78?{type:'near',match:near.name,score:near.score}:{type:'none'}}
-async function saveVisitBooking(skipNearWarning=false){let rid=$('visitResident').value,d=+$('visitDuration').value,n=$('visitorName').value.trim();$('visitorRestrictionWarning').innerHTML='';if(!selectedVisitStart||!n)return $('visitBookingStatus').innerHTML='<div class="notice alert">Complete visitante y horario.</div>';try{let restriction=await checkRestrictedVisitor(rid,n);if(restriction.type==='exact'){$('visitorRestrictionWarning').innerHTML=`<div class="notice alert" style="margin-top:10px"><b>Visita no permitida.</b><br>${esc(restriction.match)} figura como persona no autorizada para visitar a este residente.</div>`;$('visitorRestrictionWarning').scrollIntoView({behavior:'smooth',block:'center'});return}if(restriction.type==='near'&&!skipNearWarning){$('visitorRestrictionWarning').innerHTML=`<div class="notice alert" style="margin-top:10px"><b>⚠ Posible persona no autorizada</b><br><br>El nombre <b>${esc(n)}</b> es parecido a <b>${esc(restriction.match)}</b>, quien figura como persona no autorizada para visitar a este residente.<br><br>Verifique la identidad antes de continuar.<div class="actions" style="margin-bottom:0"><button type="button" class="secondary" onclick="cancelRestrictedWarning()">No continuar</button><button type="button" class="primary" onclick="continueRestrictedVisit()">Continuar con la visita</button></div></div>`;$('visitorRestrictionWarning').scrollIntoView({behavior:'smooth',block:'center'});return}await loadVisitDay();let [ok,why]=avail(selectedVisitStart,d,rid);if(!ok)return $('visitBookingStatus').innerHTML=`<div class="notice alert">Horario no disponible: ${esc(why)}.</div>`;let payload={residente_id:rid,fecha:$('visitDate').value,hora_inicio:selectedVisitStart,duracion_minutos:d,visitante_nombre:n,visitante_telefono:$('visitorPhone').value||null,visitante_parentesco:$('visitorRelation').value||null,observaciones:$('visitNotes').value||null,estado:'Confirmada',tipo_visita:'Programada'};if(editingVisitId)await api(`visitas?id=eq.${editingVisitId}`,{method:'PATCH',body:payload,prefer:'return=minimal'});else await api('visitas',{method:'POST',body:payload,prefer:'return=minimal'});resetVisitForm();await showVisitsList()}catch(e){$('visitBookingStatus').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}}
+async function saveVisitBooking(skipNearWarning=false){let rid=$('visitResident').value,d=+$('visitDuration').value,n=$('visitorName').value.trim();$('visitorRestrictionWarning').innerHTML='';if(!selectedVisitStart||!n)return $('visitBookingStatus').innerHTML='<div class="notice alert">Complete visitante y horario.</div>';try{let restriction=await checkRestrictedVisitor(rid,n);if(restriction.type==='exact'){$('visitorRestrictionWarning').innerHTML=`<div class="notice alert" style="margin-top:10px"><b>Visita no permitida.</b><br>${esc(restriction.match)} figura como persona no autorizada para visitar a este residente.</div>`;$('visitorRestrictionWarning').scrollIntoView({behavior:'smooth',block:'center'});return}if(restriction.type==='near'&&!skipNearWarning){$('visitorRestrictionWarning').innerHTML=`<div class="notice alert" style="margin-top:10px"><b>⚠ Posible persona no autorizada</b><br><br>El nombre <b>${esc(n)}</b> es parecido a <b>${esc(restriction.match)}</b>, quien figura como persona no autorizada para visitar a este residente.<br><br>Verifique la identidad antes de continuar.<div class="actions" style="margin-bottom:0"><button type="button" class="secondary" onclick="cancelRestrictedWarning()">No continuar</button><button type="button" class="primary" onclick="continueRestrictedVisit()">Continuar con la visita</button></div></div>`;$('visitorRestrictionWarning').scrollIntoView({behavior:'smooth',block:'center'});return}await loadVisitDay();let [ok,why]=avail(selectedVisitStart,d,rid);if(!ok)return $('visitBookingStatus').innerHTML=`<div class="notice alert">Horario no disponible: ${esc(why)}.</div>`;let payload={residente_id:rid,fecha:$('visitDate').value,hora_inicio:selectedVisitStart,duracion_minutos:d,visitante_nombre:n,visitante_telefono:$('visitorPhone').value||null,visitante_parentesco:$('visitorRelation').value||null,observaciones:$('visitNotes').value||null,estado:'Confirmada',tipo_visita:'Programada'};if(editingVisitId)await api(`visitas?id=eq.${editingVisitId}`,{method:'PATCH',body:payload,prefer:'return=minimal'});else await api('visitas',{method:'POST',body:payload,prefer:'return=minimal'});resetVisitForm();await showVisitsList()}catch(e){let code;try{code=JSON.parse(e.message).code}catch{}if(code==='42501'){await portalDialog('Tu rol no tiene permiso para guardar esta cita. Pide a un administrador que revise tus permisos.',{title:'La cita no se guardó',tone:'warning'});return}$('visitBookingStatus').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}}
 $('saveVisit').onclick=()=>saveVisitBooking(false);
 window.continueRestrictedVisit=()=>saveVisitBooking(true);
 window.cancelRestrictedWarning=()=>{$('visitorRestrictionWarning').innerHTML='<div class="notice alert" style="margin-top:10px">Registro detenido para verificar la identidad del visitante.</div>'};
-window.cancelScheduledVisit=async id=>{if(await portalConfirm('¿Cancelar esta cita?','Cancelar cita')){await api(`visitas?id=eq.${id}`,{method:'PATCH',body:{estado:'Cancelada'},prefer:'return=minimal'});await showVisitsList()}};
-window.deleteScheduledVisit=async id=>{if(await portalConfirm('¿Eliminar definitivamente esta cita?','Eliminar cita')){await api(`visitas?id=eq.${id}`,{method:'DELETE',prefer:'return=minimal'});await showVisitsList()}};
+window.cancelScheduledVisit=async id=>{if(!isAdmin){await portalDialog('Esta acción está reservada al rol Admin.',{title:'Acceso restringido',tone:'warning'});return;}if(await portalConfirm('¿Cancelar esta cita?','Cancelar cita')){await api(`visitas?id=eq.${id}`,{method:'PATCH',body:{estado:'Cancelada'},prefer:'return=minimal'});await showVisitsList()}};
+window.deleteScheduledVisit=async id=>{if(!isAdmin){await portalDialog('Esta acción está reservada al rol Admin.',{title:'Acceso restringido',tone:'warning'});return;}if(await portalConfirm('¿Eliminar definitivamente esta cita?','Eliminar cita')){await api(`visitas?id=eq.${id}`,{method:'DELETE',prefer:'return=minimal'});await showVisitsList()}};
 function populateAuditResidents(){
  const sel=$('auditVisitResident'),old=sel.value;
  sel.innerHTML='<option value="">Todos los residentes</option>'+residentRows.slice().sort((a,b)=>(a.nombre_completo||'').localeCompare(b.nombre_completo||'','es')).map(r=>`<option value="${esc(String(r.id))}">${esc(r.nombre_completo||'Residente')}</option>`).join('');
@@ -595,7 +655,285 @@ window.requestDeleteNews=id=>{if(!isAdmin)return;let n=newsRows.find(x=>String(x
 window.deleteNews=async id=>{if(!isAdmin)return;try{await api(`noticias?id=eq.${id}`,{method:'DELETE',prefer:'return=minimal'});$('newsDeleteChoice').classList.add('hidden');await loadNews()}catch(e){$('newsStatus').innerHTML=`<div class="notice alert">${esc(e.message)}</div>`}};
 
 let employeePositionRows=[];
-function hideAdminPanels(){['visitConfigPanel','employeeAdminHome','employeePositionsCard','employeeFormCard','employeeDetailCard','employeeReportCard'].forEach(id=>$(id)?.classList.add('hidden'))}
+const rolePermissionLabels = {
+    visitas_crear: 'Crear una visita',
+    visitas_aprobar: 'Aprobar o rechazar solicitudes',
+    visitas_llegada_salida: 'Registrar llegada y salida',
+    visitas_generar_qr: 'Generar QR de entrada',
+    visitas_comprobar_firma: 'Comprobar firma QR',
+    vitales_registrar: 'Registrar signos vitales',
+    vitales_consultar: 'Consultar lecturas de signos vitales',
+    vitales_editar: 'Editar lecturas guardadas'
+};
+const openRolePermissions = document.createElement('button');
+openRolePermissions.type = 'button';
+openRolePermissions.className = 'secondary';
+openRolePermissions.textContent = 'Permisos por rol';
+$('openPositions').after(openRolePermissions);
+openRolePermissions.onclick = async () => {
+    if (!isAdmin) return;
+    hideAdminPanels();
+    $('rolePermissionsPanel').classList.remove('hidden');
+    const status = $('rolePermissionsStatus');
+    const grid = $('rolePermissionsGrid');
+    grid.replaceChildren();
+    status.textContent = 'Cargando permisos…';
+    try {
+        const rows = await api('hm_permisos_por_rol?select=rol,funcion,habilitado');
+        const table = document.createElement('table');
+        const head = table.createTHead().insertRow();
+        for (const label of ['Función', 'Admin', 'Recepción', 'Vitales']) {
+            const th = document.createElement('th');
+            th.scope = 'col';
+            th.textContent = label;
+            head.append(th);
+        }
+        const body = table.createTBody();
+        for (const [key, label] of Object.entries(rolePermissionLabels)) {
+            const row = body.insertRow();
+            row.insertCell().textContent = label;
+            row.insertCell().textContent = 'Siempre';
+            for (const [role, title] of [['recepcion', 'Recepción'], ['vitales', 'Vitales']]) {
+                const cell = row.insertCell();
+                const entry = rows.find(item => item.rol === role && item.funcion === key);
+                if (!entry) {
+                    cell.textContent = 'Sin configurar';
+                    continue;
+                }
+                const input = document.createElement('input');
+                input.type = 'checkbox';
+                input.checked = entry.habilitado;
+                input.setAttribute('aria-label', label + ' · ' + title);
+                input.onchange = async () => {
+                    input.disabled = true;
+                    const next = input.checked;
+                    try {
+                        const saved = await api('hm_permisos_por_rol?rol=eq.' + role + '&funcion=eq.' + key, {
+                            method: 'PATCH',
+                            body: { habilitado: next },
+                            prefer: 'return=representation'
+                        });
+                        if (saved?.length !== 1 || saved[0].habilitado !== next) {
+                            throw new Error('No se confirmó el cambio.');
+                        }
+                        entry.habilitado = next;
+                        status.textContent = 'Permiso guardado.';
+                    } catch (error) {
+                        input.checked = entry.habilitado;
+                        status.textContent = 'No se pudo guardar el permiso. Vuelve a abrir la matriz para comprobar el valor.';
+                    } finally {
+                        input.disabled = false;
+                    }
+                };
+                cell.append(input);
+            }
+        }
+        for (const label of ['Entrar en Administración', 'Crear cuentas y gestionar roles y permisos']) {
+            const row = body.insertRow();
+            for (const value of [label, 'Siempre', 'Bloqueado', 'Bloqueado']) {
+                row.insertCell().textContent = value;
+            }
+        }
+        grid.append(table);
+        status.textContent = '';
+    } catch (error) {
+        status.textContent = 'No se pudo cargar la matriz de permisos.';
+    }
+};
+
+const openAccounts = document.createElement('button');
+openAccounts.type = 'button';
+openAccounts.className = 'secondary';
+openAccounts.textContent = 'Cuentas y accesos';
+openRolePermissions.after(openAccounts);
+const accountRoleNames = { admin: 'Admin', usuario: 'Usuario', recepcion: 'Recepción', vitales: 'Vitales' };
+
+function accountButton(label, action, disabled = false, style = '') {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'account-button ' + style;
+    button.textContent = label;
+    button.disabled = disabled;
+    button.onclick = action;
+    return button;
+}
+
+function accountDialog(title, message, field, label) {
+    const dialog = $('accountDialog');
+    $('accountDialogTitle').textContent = title;
+    $('accountDialogMessage').textContent = message;
+    $('accountDialogField').replaceChildren(field);
+    $('accountDialogSubmit').textContent = label;
+    dialog.returnValue = '';
+    return new Promise(resolve => {
+        dialog.addEventListener('close', () => {
+            resolve(dialog.returnValue === 'confirm' ? field.value : null);
+        }, {once: true});
+        dialog.showModal();
+        field.focus();
+    });
+}
+
+async function loadAccounts() {
+    if (!isAdmin) return;
+    const list = $('accountList');
+    const status = $('accountListStatus');
+    const refresh = $('refreshAccounts');
+    refresh.disabled = true;
+    list.replaceChildren();
+    status.textContent = 'Cargando cuentas…';
+    try {
+        const accounts = await api('rpc/hm_listar_cuentas_con_estado', {method: 'POST', body: {}});
+        status.textContent = accounts.length ? '' : 'No hay cuentas para mostrar.';
+        if (!accounts.length) return;
+        const table = document.createElement('table');
+        const head = table.createTHead().insertRow();
+        for (const title of ['Cuenta', 'Rol actual', 'Estado', 'Cambiar rol', 'Acceso', 'Eliminar']) {
+            const cell = document.createElement('th');
+            cell.scope = 'col';
+            cell.textContent = title;
+            head.append(cell);
+        }
+        const rows = table.createTBody();
+        for (const account of accounts) {
+            const row = rows.insertRow();
+            row.insertCell().textContent = account.correo;
+            row.insertCell().textContent = accountRoleNames[account.rol] || account.rol;
+            row.insertCell().textContent = account.activa ? 'Activa' : 'Desactivada';
+            const roleCell = row.insertCell();
+            const accessCell = row.insertCell();
+            const deleteCell = row.insertCell();
+            if (!['usuario', 'recepcion', 'vitales'].includes(account.rol)) {
+                for (const cell of [roleCell, accessCell, deleteCell]) cell.textContent = '—';
+                continue;
+            }
+
+            async function save(change, message) {
+                for (const button of row.querySelectorAll('button')) button.disabled = true;
+                try {
+                    await change();
+                    await loadAccounts();
+                    status.textContent = message;
+                } catch (error) {
+                    await loadAccounts();
+                    status.textContent = error.message || 'No se pudo confirmar el cambio.';
+                }
+            }
+
+            roleCell.append(accountButton('Cambiar rol', async () => {
+                const select = document.createElement('select');
+                select.required = true;
+                select.setAttribute('aria-label', 'Nuevo rol');
+                select.add(new Option('Selecciona el nuevo rol', ''));
+                for (const role of ['recepcion', 'vitales']) {
+                    if (role !== account.rol) select.add(new Option(accountRoleNames[role], role));
+                }
+                const role = await accountDialog('Cambiar rol', account.correo + ' · Rol actual: ' + accountRoleNames[account.rol], select, 'Guardar');
+                if (!role) return;
+                await save(() => api('rpc/hm_cambiar_rol', {
+                    method: 'POST', body: {p_id: account.id, p_actual: account.rol, p_nuevo: role}
+                }), 'Rol actualizado.');
+            }));
+
+            const action = account.activa ? 'Desactivar' : 'Reactivar';
+            accessCell.append(accountButton(action, async () => {
+                if (!await portalConfirm('¿' + action + ' la cuenta de ' + account.correo + '?')) return;
+                await save(() => api('rpc/hm_cambiar_estado_cuenta', {
+                    method: 'POST', body: {p_id: account.id, p_activa: !account.activa}
+                }), account.activa ? 'Cuenta desactivada.' : 'Cuenta reactivada.');
+            }));
+
+            const remove = accountButton('Eliminar', async () => {
+                const field = document.createElement('input');
+                field.type = 'email';
+                field.required = true;
+                field.autocomplete = 'off';
+                field.setAttribute('aria-label', 'Confirma el correo de la cuenta');
+                field.addEventListener('input', () => {
+                    field.setCustomValidity(field.value.trim().toLowerCase() === account.correo.toLowerCase() ? '' : 'El correo no coincide.');
+                });
+                const email = await accountDialog('Eliminar cuenta', 'La eliminación es definitiva. Escribe el correo ' + account.correo + ' para confirmar.', field, 'Eliminar');
+                if (email === null || email.trim().toLowerCase() !== account.correo.toLowerCase()) return;
+                await save(async () => {
+                    const response = await fetch(SUPABASE_URL + '/functions/v1/hm-eliminar-cuenta', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + token,
+                            'apikey': SUPABASE_KEY,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({id: account.id, email})
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.message || 'No se pudo confirmar la eliminación.');
+                }, 'Cuenta eliminada.');
+            }, account.activa, 'account-delete');
+            if (account.activa) remove.title = 'Desactiva la cuenta antes de eliminarla';
+            deleteCell.append(remove);
+        }
+        list.append(table);
+    } catch {
+        status.textContent = 'No se pudieron cargar las cuentas.';
+    } finally {
+        refresh.disabled = false;
+    }
+}
+
+$('refreshAccounts').onclick = loadAccounts;
+$('openCreateAccount').onclick = () => {
+    $('createAccountForm').hidden = false;
+    $('accountStatus').textContent = '';
+    $('accountEmail').focus();
+};
+$('cancelCreateAccount').onclick = () => {
+    $('createAccountForm').reset();
+    $('createAccountForm').hidden = true;
+    $('openCreateAccount').focus();
+};
+openAccounts.onclick = () => {
+    if (!isAdmin) return;
+    hideAdminPanels();
+    $('createAccountForm').reset();
+    $('accountStatus').textContent = '';
+    $('accountPanel').classList.remove('hidden');
+    loadAccounts();
+};
+$('createAccountForm').onsubmit = async event => {
+    event.preventDefault();
+    if (!isAdmin) return;
+    const form = event.currentTarget;
+    const submit = form.querySelector('button[type="submit"]');
+    if (submit.disabled) return;
+    submit.disabled = true;
+    const status = $('accountStatus');
+    status.textContent = 'Creando cuenta…';
+    const body = {
+        email: $('accountEmail').value.trim(),
+        role: $('accountRole').value,
+        password: $('accountPassword').value
+    };
+    $('accountPassword').value = '';
+    try {
+        const response = await fetch(SUPABASE_URL + '/functions/v1/hm-crear-cuenta', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'apikey': SUPABASE_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+        const result = await response.json();
+        status.textContent = result.message || 'No se pudo confirmar el alta.';
+        if (response.status === 201) { form.reset(); form.hidden = true; await loadAccounts(); }
+    } catch {
+        status.textContent = 'No se pudo confirmar el alta. Revisa si la cuenta existe antes de reintentar.';
+    } finally {
+        submit.disabled = false;
+    }
+};
+
+function hideAdminPanels(){document.getElementById("visitConfigStatus").textContent="";['accountPanel','rolePermissionsPanel','visitConfigPanel','employeeAdminHome','employeePositionsCard','employeeFormCard','employeeDetailCard','employeeReportCard'].forEach(id=>$(id)?.classList.add('hidden'))}
 window.showAdminMenu=()=>{hideAdminPanels();$('adminMenu').classList.remove('hidden')};
 $('openVisitConfig').onclick=()=>{hideAdminPanels();$('visitConfigPanel').classList.remove('hidden')};
 $('openEmployees').onclick=async()=>{hideAdminPanels();$('employeeAdminHome').classList.remove('hidden');await loadPositions();await loadEmployees()};
@@ -818,7 +1156,11 @@ $('relLista').addEventListener('click',async ev=>{
 });
 
 $('relPrintPreview').onclick=()=>{window.print();};
-function activatePortal(id){if(id==='relevos'){hmOpenRelevos();}if(id==='residents'){loadResidents();showResidentList();}if(id==='visits'){openVisits();}if(id==='admin'){loadVisitConfig();}if(id==='activities'){showActivityCalendar();loadActivities();}if(id==='news'){showNewsList();loadNews();}if(id==='admin'&&isAdmin){showAdminMenu();loadPositions();loadEmployees();}document.querySelectorAll('.portal-section').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.portal-tab').forEach(x=>x.classList.toggle('active',x.dataset.portal===id));let target=$(id);if(target)target.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}document.querySelectorAll('.portal-tab').forEach(b=>b.onclick=()=>activatePortal(b.dataset.portal));document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>activatePortal(b.dataset.open));document.querySelectorAll('#pressureNav button[data-tab]').forEach(b=>b.onclick=()=>activateTab(b.dataset.tab));
+async function activatePortal(id){if(id==='admin'&&!isAdmin)return;
+if(id==='pressure'&&!await requireRolePermission('vitales_registrar','registrar lecturas de signos vitales',true)){
+  if(!await requireRolePermission('vitales_consultar','acceder a Vitales'))return;
+  activateTab('day');
+}if(id==='relevos'){hmOpenRelevos();}if(id==='residents'){loadResidents();showResidentList();}if(id==='visits'){openVisits();}if(id==='admin'){loadVisitConfig();}if(id==='activities'){showActivityCalendar();loadActivities();}if(id==='news'){showNewsList();loadNews();}if(id==='admin'&&isAdmin){showAdminMenu();loadPositions();loadEmployees();}document.querySelectorAll('.portal-section').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.portal-tab').forEach(x=>x.classList.toggle('active',x.dataset.portal===id));let target=$(id);if(target)target.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}document.querySelectorAll('.portal-tab').forEach(b=>b.onclick=()=>activatePortal(b.dataset.portal));document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>activatePortal(b.dataset.open));document.querySelectorAll('#pressureNav button[data-tab]').forEach(b=>b.onclick=async()=>{const entry=b.dataset.tab==='entry';if(await requireRolePermission(entry?'vitales_registrar':'vitales_consultar',entry?'registrar lecturas de signos vitales':'consultar lecturas de signos vitales'))activateTab(b.dataset.tab)});
 if(token){showApp();}else{enterPublicMode();}
 
 async function publicApi(path){
@@ -863,7 +1205,8 @@ async function hmQrCall(action,extra={}){
  if(!response.ok)throw Error(data.error||'No se pudo completar la operación.');
  return data;
 }
-async function hmGenerateQR(){
+async function hmGenerateQR(permissionChecked = false){
+ if(permissionChecked !== true && !await requireRolePermission('visitas_generar_qr','generar un QR de entrada'))return;
  try{
   $('hmQrImage').textContent='Generando QR…';
   const data=await hmQrCall('create',{visit_id:hmQrVisit});
@@ -875,10 +1218,11 @@ async function hmGenerateQR(){
   $('hmQrStatus').textContent='Esperando firma. El código vence en 5 minutos.';
  }catch(e){$('hmQrImage').textContent='';$('hmQrStatus').textContent=e.message}
 }
-window.openVisitSignature=async id=>{hmQrVisit=id;$('hmQrModal').style.display='flex';await hmGenerateQR()};
+window.openVisitSignature=async id=>{if(!await requireRolePermission('visitas_generar_qr','generar un QR de entrada'))return;hmQrVisit=id;$('hmQrModal').style.display='flex';await hmGenerateQR(true)};
 document.addEventListener("DOMContentLoaded",()=>{
 $('hmQrRefresh').onclick=hmGenerateQR;
 $('hmQrCheck').onclick=async()=>{
+ if(!await requireRolePermission('visitas_comprobar_firma','comprobar la firma QR'))return;
  const button=$('hmQrCheck'), status=$('hmQrStatus');
  if(!hmQrVisit){status.textContent='No hay una visita seleccionada para comprobar.';return;}
  button.disabled=true;
@@ -929,10 +1273,12 @@ function hmRequestDecision({title,message,needReason=false}){
   actions.append(cancel,ok);panel.append(actions);overlay.append(panel);document.body.append(overlay);if(input)input.focus();else ok.focus();
  });
 }
-async function refresh(){
+async function refresh(quiet = false){
  const status=el('hmSolicitudesEstado'),list=el('hmSolicitudesLista');
  if(!token){status.textContent='Inicie sesión para consultar solicitudes.';return;}
- status.textContent='Consultando solicitudes…';list.replaceChildren();
+ list.replaceChildren();
+ if(!await requireRolePermission('visitas_aprobar','revisar solicitudes de visita',quiet)){status.textContent='Tu rol no tiene acceso a las solicitudes pendientes.';return;}
+ status.textContent='Consultando solicitudes…';
  try{
   [pending,residents,restricted]=await Promise.all([
    api('hm_solicitudes_visitas?select=id,created_at,residente_escrito,residente_id,fecha,hora_inicio,duracion_minutos,visitante_nombre,visitante_telefono,visitante_parentesco,observaciones,estado,motivo_revision&estado=in.(Pendiente,Revisi%C3%B3n)&order=created_at.desc'),
@@ -963,6 +1309,7 @@ async function refresh(){
  }catch(e){status.textContent='No fue posible consultar solicitudes: '+e.message;}
 }
 async function decide(r,action,residenteId,btn){
+ if(!await requireRolePermission('visitas_aprobar','aprobar o rechazar solicitudes'))return;
  let motivo='';
  if(action==='rechazar'){motivo=await hmRequestDecision({title:'Rechazar solicitud de visita',message:'Visitante: '+r.visitante_nombre+' · Residente: '+r.residente_escrito+' · '+hmDisplayDate(r.fecha)+' a las '+hmDisplayTime(r.hora_inicio),needReason:true});if(!motivo)return;}
  else{
@@ -981,10 +1328,10 @@ async function decide(r,action,residenteId,btn){
   status.textContent='Solicitud '+(data.estado||'procesada')+'.';await refresh();if(action==='aprobar')await showVisitsList();
  }catch(e){status.textContent='No se completó la operación: '+e.message+' (RPC v3 requiere instalación y pruebas).';}finally{btn.disabled=false;}
 }
-el('hmSolicitudesActualizar')?.addEventListener('click',refresh);
-document.querySelectorAll('[data-portal="visits"]').forEach(b=>b.addEventListener('click',()=>{if(token)refresh();}));
+el('hmSolicitudesActualizar')?.addEventListener('click',()=>refresh());
+document.querySelectorAll('[data-portal="visits"]').forEach(b=>b.addEventListener('click',()=>{if(token)refresh(true);}));
 })();
-</script><div id="portalDialog" class="no-print" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:30000;align-items:center;justify-content:center;padding:20px"><div class="card" style="max-width:520px;width:100%;margin:0"><h3 id="portalDialogTitle">Hacienda Margarita</h3><p id="portalDialogMessage" style="white-space:pre-wrap"></p><div class="actions" style="justify-content:flex-end"><button id="portalDialogCancel" class="secondary">Cancelar</button><button id="portalDialogOk" class="primary">Aceptar</button></div></div></div><div id="hmQrModal" class="no-print" style="display:none;position:fixed;inset:0;z-index:35000;background:#0009;align-items:center;justify-content:center;padding:18px">
+</script><div id="portalDialog" class="no-print" role="dialog" aria-modal="true" aria-labelledby="portalDialogTitle" aria-describedby="portalDialogMessage" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:36000;align-items:center;justify-content:center;padding:20px"><div class="card" style="max-width:520px;width:100%;margin:0"><h3 id="portalDialogTitle">Hacienda Margarita</h3><p id="portalDialogMessage" style="white-space:pre-wrap"></p><div class="actions" style="justify-content:flex-end"><button id="portalDialogCancel" class="secondary">Cancelar</button><button id="portalDialogOk" class="primary">Aceptar</button></div></div></div><div id="hmQrModal" class="no-print" style="display:none;position:fixed;inset:0;z-index:35000;background:#0009;align-items:center;justify-content:center;padding:18px">
 <div class="card" style="max-width:440px;width:100%;max-height:90vh;overflow:auto">
 <h2>Firma digital de entrada</h2>
 <p>El visitante escanea este QR en recepción. Vence en cinco minutos y solo puede firmarse una vez.</p>
