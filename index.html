@@ -92,8 +92,8 @@ body.public-mode .calendar-num{display:block!important;color:#2c2927!important}
 #portalDialog[data-tone="warning"] .card{border-top:5px solid #b68c39;border-radius:16px;padding:24px;box-shadow:0 18px 48px #0003}
 #portalDialog[data-tone="warning"] h3{color:#53382d;margin:0 0 10px}
 #portalDialog[data-tone="warning"] p{line-height:1.55;margin:0 0 18px}
-</style></head><body><header><img src="logo.jpg" alt="Hacienda Margarita"><p>Portal Hacienda Margarita</p></header><main>
-<div id="loginCard" class="card no-print" style="display:none"><h2>Iniciar sesión</h2><div class="grid"><div><label>Correo electrónico</label><input id="email" type="email"></div><div><label>Contraseña</label><input id="password" type="password"></div></div><div class="actions"><button id="login" class="primary">Entrar</button></div><div id="loginstatus"></div></div>
+ .password-toggle{margin:4px 0 8px;cursor:pointer} </style></head><body><header><img src="logo.jpg" alt="Hacienda Margarita"><p>Portal Hacienda Margarita</p></header><main>
+<div id="loginCard" class="card no-print" style="display:none"><h2>Iniciar sesión</h2><div class="grid"><div><label>Correo electrónico</label><input id="email" type="email"></div><div><label>Contraseña</label><input id="password" type="password" autocomplete="current-password"><button type="button" class="password-toggle" data-target="password" aria-label="Mostrar contraseña">Mostrar</button></div></div><div class="actions"><button id="login" class="primary">Entrar</button></div><div id="loginstatus"></div></div>
 <div id="appNotice" class="notice info no-print" style="display:none"><b>Portal Hacienda Margarita.</b> Información y servicios para residentes, familiares y personal.</div>
 <nav id="appnav" class="nav no-print" style="display:none"><button class="active portal-tab" data-portal="home">Inicio</button><button class="portal-tab" data-portal="residents">Residentes</button><button class="portal-tab" data-portal="pressure">Vitales</button><button class="portal-tab" data-portal="visits">Visitas</button><button class="portal-tab" data-portal="activities">Actividades</button><button class="portal-tab" data-portal="news">Noticias</button><button class="portal-tab" data-portal="about">Quiénes Somos</button><button class="portal-tab" data-portal="contacts">Contactos</button><button id="adminNav" class="portal-tab hidden" data-portal="admin">Administración</button><button id="logout" class="danger">Cerrar sesión</button><a class="public-only" href="solicitar-visita.html" style="align-items:center;padding:10px 14px;border-radius:9px;background:#38735b;color:white;font-weight:700;text-decoration:none">Solicitar Visita</a><button id="staffAccessBtn" class="public-only">Acceso al Personal</button></nav>
 <div id="appbody" style="display:none"><section id="home" class="portal-section active"><div class="card"><h1>Bienvenido a Portal Hacienda Margarita</h1><p class="section-intro">Acceso central a información y servicios de Hacienda Margarita.</p></div><div class="module-grid"><div class="module-card"><h3>Residentes</h3><p>Información general y expediente de residentes.</p><button data-open="residents">Abrir</button></div><div class="module-card"><h3>Vitales</h3><p>Registro, consulta y reportes de presión arterial, pulso y temperatura.</p><button data-open="pressure">Abrir</button></div><div class="module-card"><h3>Visitas</h3><p>Programación y consulta de citas de visitas.</p><button data-open="visits">Abrir</button></div><div class="module-card"><h3>Calendario de Actividades</h3><p>Actividades y eventos de Hacienda Margarita.</p><button data-open="activities">Abrir</button></div><div class="module-card"><h3>Noticias</h3><p>Noticias y avisos de interés.</p><button data-open="news">Abrir</button></div><div class="module-card"><h3>Información Institucional</h3><p>Quiénes somos, nuestras facilidades y contactos.</p><button data-open="about">Abrir</button></div></div></section><section id="residents" class="portal-section">
@@ -164,7 +164,7 @@ body.public-mode .calendar-num{display:block!important;color:#2c2927!important}
 <form id="createAccountForm" autocomplete="off" hidden><h3>Crear cuenta de personal</h3>
 <label for="accountEmail">Correo electrónico</label><input id="accountEmail" type="email" maxlength="254" required>
 <label for="accountRole">Rol</label><select id="accountRole" required><option value="">Selecciona un rol</option><option value="admin">Admin</option><option value="recepcion">Recepción</option><option value="vitales">Vitales</option></select>
-<label for="accountPassword">Contraseña inicial (mínimo 12 caracteres)</label><input id="accountPassword" type="password" autocomplete="new-password" minlength="12" maxlength="72" required>
+<label for="accountPassword">Contraseña inicial (mínimo 12 caracteres)</label><input id="accountPassword" type="password" autocomplete="new-password" minlength="12" maxlength="72" required><button type="button" class="password-toggle" data-target="accountPassword" aria-label="Mostrar contraseña">Mostrar</button>
 <div class="account-toolbar"><button type="button" id="cancelCreateAccount" class="account-button">Cancelar</button><button type="submit" class="account-button">Crear cuenta</button></div>
 </form>
 <p id="accountStatus" role="status"></p><div class="account-toolbar"><h3>Cuentas existentes</h3><div class="actions"><button id="refreshAccounts" type="button" class="account-button">Actualizar cuentas</button><button id="openCreateAccount" type="button" class="account-button">Crear cuenta</button></div></div><p id="accountListStatus" role="status"></p><div id="accountList"></div><dialog id="accountDialog" aria-labelledby="accountDialogTitle"><h3 id="accountDialogTitle"></h3><p id="accountDialogMessage"></p><form method="dialog"><div id="accountDialogField"></div><div class="account-toolbar"><button type="submit" value="cancel" formnovalidate class="account-button">Cancelar</button><button type="submit" id="accountDialogSubmit" value="confirm" class="account-button"></button></div></form></dialog>
@@ -774,6 +774,70 @@ function accountDialog(title, message, field, label) {
     });
 }
 
+
+const HM_PRINCIPAL_UID = 'd331b83f-5688-401a-be45-b8d9b114c2b8';
+function getSessionUid() { try { return JSON.parse(atob(token.split('.')[1])).sub; } catch { return ''; } }
+document.addEventListener('click', event => {
+  const button = event.target.closest('.password-toggle');
+  if (!button) return;
+  const input = document.getElementById(button.dataset.target);
+  if (!input) return;
+  const show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  button.textContent = show ? 'Ocultar' : 'Mostrar';
+  button.setAttribute('aria-label', button.textContent + ' contraseña');
+});
+async function manageAdminAccount(payload) {
+  const response = await fetch(SUPABASE_URL + '/functions/v1/hm-gestionar-admin', {
+    method: 'POST',
+    headers: {'Authorization': 'Bearer ' + token, 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.message || 'No se pudo realizar el cambio.');
+  return result;
+}
+async function editAdminCredentials(account) {
+  if (getSessionUid() !== HM_PRINCIPAL_UID) return;
+  const dialog = document.createElement('dialog');
+  dialog.innerHTML = `<form method="dialog" style="display:grid;gap:12px;min-width:min(90vw,360px)">
+    <h3>Editar credenciales Admin</h3>
+    <p class="small"></p>
+    <label>Correo nuevo<input name="email" type="email" maxlength="254" autocomplete="off"></label>
+    <label>Contraseña nueva (12 caracteres mínimo)<input name="password" type="password" minlength="12" maxlength="72" autocomplete="new-password"></label>
+    <button type="button" class="password-toggle" id="hmEditShow">Mostrar contraseña</button>
+    <p class="small">Deja un campo vacío si no deseas cambiarlo. La contraseña actual no puede recuperarse.</p>
+    <div class="actions"><button type="button" id="hmEditCancel">Cancelar</button><button type="submit">Guardar</button></div>
+  </form>`;
+  const form = dialog.querySelector('form');
+  form.querySelector('p').textContent = account.correo;
+  form.elements.email.value = account.correo;
+  form.querySelector('#hmEditCancel').onclick = () => dialog.close();
+  form.querySelector('#hmEditShow').onclick = () => {
+    const input = form.elements.password;
+    input.type = input.type === 'password' ? 'text' : 'password';
+    form.querySelector('#hmEditShow').textContent = input.type === 'text' ? 'Ocultar contraseña' : 'Mostrar contraseña';
+  };
+  form.onsubmit = async event => {
+    event.preventDefault();
+    const email = form.elements.email.value.trim().toLowerCase();
+    const password = form.elements.password.value;
+    if (email === account.correo.toLowerCase() && !password) { dialog.close(); return; }
+    if (password && (password.length < 12 || new TextEncoder().encode(password).length > 72)) { await portalAlert('La contraseña debe tener entre 12 y 72 bytes.'); return; }
+    if (!await portalConfirm('¿Confirmas el cambio de credenciales de ' + account.correo + '?')) return;
+    const save = form.querySelector('button[type="submit"]'); save.disabled = true;
+    try {
+      await manageAdminAccount({action: 'credentials', id: account.id, ...(email !== account.correo.toLowerCase() ? {email} : {}), ...(password ? {password} : {})});
+      dialog.close(); await loadAccounts();
+      $('accountListStatus').textContent = 'Credenciales actualizadas. Si cambiaste tus propias credenciales, vuelve a iniciar sesión.';
+    } catch (error) { await portalAlert(error.message); }
+    finally { save.disabled = false; }
+  };
+  document.body.append(dialog);
+  dialog.addEventListener('close', () => dialog.remove(), {once:true});
+  dialog.showModal();
+}
+
 async function loadAccounts() {
     if (!isAdmin) return;
     const list = $('accountList');
@@ -788,7 +852,7 @@ async function loadAccounts() {
         if (!accounts.length) return;
         const table = document.createElement('table');
         const head = table.createTHead().insertRow();
-        for (const title of ['Cuenta', 'Rol actual', 'Estado', 'Cambiar rol', 'Acceso', 'Eliminar']) {
+        for (const title of ['Cuenta', 'Rol actual', 'Estado', 'Cambiar rol', 'Acceso', 'Eliminar', 'Credenciales']) {
             const cell = document.createElement('th');
             cell.scope = 'col';
             cell.textContent = title;
@@ -803,6 +867,26 @@ async function loadAccounts() {
             const roleCell = row.insertCell();
             const accessCell = row.insertCell();
             const deleteCell = row.insertCell();
+            const credentialCell = row.insertCell();
+            const principalSession = getSessionUid() === HM_PRINCIPAL_UID;
+            if (account.rol === 'admin') {
+                for (const cell of [roleCell, accessCell, deleteCell]) cell.textContent = '—';
+                if (principalSession) {
+                    credentialCell.append(accountButton('Editar credenciales', () => editAdminCredentials(account)));
+                    if (account.id !== HM_PRINCIPAL_UID) {
+                        accessCell.textContent = '—';
+                        deleteCell.replaceChildren(accountButton('Eliminar', async () => {
+                            const email = prompt('Para eliminar definitivamente esta cuenta, escribe su correo exacto: ' + account.correo);
+                            if (email === null || email.trim().toLowerCase() !== account.correo.toLowerCase()) return;
+                            if (!await portalConfirm('Esta eliminación es definitiva. ¿Continuar?')) return;
+                            await manageAdminAccount({action: 'delete', id: account.id, email});
+                            await loadAccounts();
+                        }));
+                    }
+                } else credentialCell.textContent = '—';
+                continue;
+            }
+            credentialCell.textContent = '—';
             if (!['usuario', 'recepcion', 'vitales'].includes(account.rol)) {
                 for (const cell of [roleCell, accessCell, deleteCell]) cell.textContent = '—';
                 continue;
