@@ -92,7 +92,33 @@ body.public-mode .calendar-num{display:block!important;color:#2c2927!important}
 #portalDialog[data-tone="warning"] .card{border-top:5px solid #b68c39;border-radius:16px;padding:24px;box-shadow:0 18px 48px #0003}
 #portalDialog[data-tone="warning"] h3{color:#53382d;margin:0 0 10px}
 #portalDialog[data-tone="warning"] p{line-height:1.55;margin:0 0 18px}
- .password-toggle{margin:4px 0 8px;cursor:pointer} </style></head><body><header><img src="logo.jpg" alt="Hacienda Margarita"><p>Portal Hacienda Margarita</p></header><main>
+ .password-toggle{margin:4px 0 8px;cursor:pointer} 
+/* Hacienda Margarita: edición y confirmación de credenciales Admin */
+.hm-credentials-dialog{border:0;border-radius:18px;padding:0;width:min(92vw,490px);max-height:90vh;overflow:auto;box-shadow:0 24px 75px rgba(35,25,18,.3);color:#332c28;background:#fff}
+.hm-credentials-dialog::backdrop{background:rgba(32,26,20,.54)}
+.hm-cred-shell{padding:26px 28px 24px}
+.hm-cred-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.hm-cred-header h3{font-size:1.25rem;margin:0;color:#5f4339}
+.hm-cred-close{background:transparent!important;border:0!important;color:#6e615a!important;font-size:26px;line-height:1;padding:0 5px!important;cursor:pointer}
+.hm-cred-account{font-size:.9rem;color:#74675f;background:#f8f3eb;border-radius:9px;padding:11px 12px;overflow-wrap:anywhere;margin:0 0 17px}
+.hm-credentials-dialog label{display:block;font-weight:700;margin:14px 0 7px;color:#44352e}
+.hm-cred-hint{font-size:.84rem;font-weight:400;color:#71655e}
+.hm-credentials-dialog input{box-sizing:border-box;width:100%;border:1px solid #cfc7be;border-radius:10px;padding:12px 13px;font:inherit;background:white;color:#27211e}
+.hm-credentials-dialog input:focus{outline:2px solid #d9b744;outline-offset:1px}
+.hm-cred-password{display:flex;gap:8px;align-items:center}
+.hm-cred-password input{min-width:0;flex:1}
+.hm-cred-password button{flex-shrink:0;background:#f4eee7!important;color:#5e4338!important;border:1px solid #d9cfc5!important;border-radius:9px!important;padding:11px 12px!important}
+.hm-cred-help{font-size:.88rem;line-height:1.5;color:#6f625b;margin:15px 0}
+.hm-cred-confirm-title{font-weight:700;font-size:1.08rem;margin:10px 0}
+.hm-cred-error{background:#fff1ef;color:#9d3027;border:1px solid #edc2bc;border-radius:9px;padding:10px 12px;font-size:.9rem;overflow-wrap:anywhere}
+.hm-cred-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:24px}
+.hm-cred-actions button{border-radius:9px!important;padding:11px 17px!important;font-weight:700;cursor:pointer}
+.hm-cred-secondary{background:#f2ece6!important;color:#5c4339!important;border:1px solid #ddd2c8!important}
+.hm-cred-primary{background:#65463a!important;color:#fff!important;border:1px solid #65463a!important}
+.hm-cred-actions button:disabled{opacity:.55;cursor:wait}
+.hm-credentials-dialog [hidden]{display:none!important}
+@media(max-width:480px){.hm-cred-shell{padding:20px 18px}.hm-cred-actions button{flex:1}}
+</style></head><body><header><img src="logo.jpg" alt="Hacienda Margarita"><p>Portal Hacienda Margarita</p></header><main>
 <div id="loginCard" class="card no-print" style="display:none"><h2>Iniciar sesión</h2><div class="grid"><div><label>Correo electrónico</label><input id="email" type="email"></div><div><label>Contraseña</label><input id="password" type="password" autocomplete="current-password"><button type="button" class="password-toggle" data-target="password" aria-label="Mostrar contraseña">Mostrar</button></div></div><div class="actions"><button id="login" class="primary">Entrar</button></div><div id="loginstatus"></div></div>
 <div id="appNotice" class="notice info no-print" style="display:none"><b>Portal Hacienda Margarita.</b> Información y servicios para residentes, familiares y personal.</div>
 <nav id="appnav" class="nav no-print" style="display:none"><button class="active portal-tab" data-portal="home">Inicio</button><button class="portal-tab" data-portal="residents">Residentes</button><button class="portal-tab" data-portal="pressure">Vitales</button><button class="portal-tab" data-portal="visits">Visitas</button><button class="portal-tab" data-portal="activities">Actividades</button><button class="portal-tab" data-portal="news">Noticias</button><button class="portal-tab" data-portal="about">Quiénes Somos</button><button class="portal-tab" data-portal="contacts">Contactos</button><button id="adminNav" class="portal-tab hidden" data-portal="admin">Administración</button><button id="logout" class="danger">Cerrar sesión</button><a class="public-only" href="solicitar-visita.html" style="align-items:center;padding:10px 14px;border-radius:9px;background:#38735b;color:white;font-weight:700;text-decoration:none">Solicitar Visita</a><button id="staffAccessBtn" class="public-only">Acceso al Personal</button></nav>
@@ -800,41 +826,91 @@ async function manageAdminAccount(payload) {
 async function editAdminCredentials(account) {
   if (getSessionUid() !== HM_PRINCIPAL_UID) return;
   const dialog = document.createElement('dialog');
-  dialog.innerHTML = `<form method="dialog" style="display:grid;gap:12px;min-width:min(90vw,360px)">
-    <h3>Editar credenciales Admin</h3>
-    <p class="small"></p>
-    <label>Correo nuevo<input name="email" type="email" maxlength="254" autocomplete="off"></label>
-    <label>Contraseña nueva (12 caracteres mínimo)<input name="password" type="password" minlength="12" maxlength="72" autocomplete="new-password"></label>
-    <button type="button" class="password-toggle" id="hmEditShow">Mostrar contraseña</button>
-    <p class="small">Deja un campo vacío si no deseas cambiarlo. La contraseña actual no puede recuperarse.</p>
-    <div class="actions"><button type="button" id="hmEditCancel">Cancelar</button><button type="submit">Guardar</button></div>
-  </form>`;
-  const form = dialog.querySelector('form');
-  form.querySelector('p').textContent = account.correo;
-  form.elements.email.value = account.correo;
-  form.querySelector('#hmEditCancel').onclick = () => dialog.close();
-  form.querySelector('#hmEditShow').onclick = () => {
-    const input = form.elements.password;
-    input.type = input.type === 'password' ? 'text' : 'password';
-    form.querySelector('#hmEditShow').textContent = input.type === 'text' ? 'Ocultar contraseña' : 'Mostrar contraseña';
+  dialog.className = 'hm-credentials-dialog';
+  dialog.setAttribute('aria-labelledby', 'hmCredTitle');
+  dialog.innerHTML = `<div class="hm-cred-shell">
+    <div class="hm-cred-header"><h3 id="hmCredTitle">Editar credenciales Admin</h3><button type="button" class="hm-cred-close" aria-label="Cerrar" id="hmCredClose">×</button></div>
+    <form id="hmCredForm" novalidate>
+      <p class="hm-cred-account"></p>
+      <label for="hmCredEmail">Correo nuevo</label><input id="hmCredEmail" name="email" type="email" maxlength="254" autocomplete="off" required>
+      <label for="hmCredPassword">Contraseña nueva <span class="hm-cred-hint">(12 caracteres mínimo)</span></label>
+      <div class="hm-cred-password"><input id="hmCredPassword" name="password" type="password" minlength="12" maxlength="72" autocomplete="new-password"><button type="button" id="hmEditShow">Mostrar</button></div>
+      <p class="hm-cred-help">Deja la contraseña vacía si no deseas cambiarla. La contraseña actual no puede recuperarse.</p>
+      <p class="hm-cred-error" id="hmCredError" role="alert" hidden></p>
+      <div class="hm-cred-actions"><button type="button" class="hm-cred-secondary" id="hmEditCancel">Cancelar</button><button type="submit" class="hm-cred-primary">Guardar cambios</button></div>
+    </form>
+    <div id="hmCredConfirm" hidden>
+      <p class="hm-cred-confirm-title">¿Confirmas este cambio?</p>
+      <p id="hmCredSummary" class="hm-cred-help"></p>
+      <p class="hm-cred-help">Por seguridad, verifica que deseas actualizar las credenciales de esta cuenta Administrador.</p>
+      <p class="hm-cred-error" id="hmCredConfirmError" role="alert" hidden></p>
+      <div class="hm-cred-actions"><button type="button" class="hm-cred-secondary" id="hmCredBack">Volver</button><button type="button" class="hm-cred-primary" id="hmCredConfirmSave">Sí, confirmar</button></div>
+    </div>
+  </div>`;
+  const form = dialog.querySelector('#hmCredForm');
+  const confirmation = dialog.querySelector('#hmCredConfirm');
+  const emailInput = form.elements.email;
+  const passwordInput = form.elements.password;
+  const errorBox = dialog.querySelector('#hmCredError');
+  const confirmError = dialog.querySelector('#hmCredConfirmError');
+  let pendingPayload = null;
+  form.querySelector('.hm-cred-account').textContent = account.correo;
+  emailInput.value = account.correo;
+  const closeDialog = () => dialog.close();
+  dialog.querySelector('#hmCredClose').onclick = closeDialog;
+  dialog.querySelector('#hmEditCancel').onclick = closeDialog;
+  dialog.querySelector('#hmEditShow').onclick = () => {
+    const showing = passwordInput.type === 'password';
+    passwordInput.type = showing ? 'text' : 'password';
+    dialog.querySelector('#hmEditShow').textContent = showing ? 'Ocultar' : 'Mostrar';
   };
-  form.onsubmit = async event => {
+  const showError = (element, message) => { element.textContent = message; element.hidden = false; };
+  form.onsubmit = event => {
     event.preventDefault();
-    const email = form.elements.email.value.trim().toLowerCase();
-    const password = form.elements.password.value;
-    if (email === account.correo.toLowerCase() && !password) { dialog.close(); return; }
-    if (password && (password.length < 12 || new TextEncoder().encode(password).length > 72)) { await portalAlert('La contraseña debe tener entre 12 y 72 bytes.'); return; }
-    if (!await portalConfirm('¿Confirmas el cambio de credenciales de ' + account.correo + '?')) return;
-    const save = form.querySelector('button[type="submit"]'); save.disabled = true;
+    errorBox.hidden = true;
+    const email = emailInput.value.trim().toLowerCase();
+    const password = passwordInput.value;
+    if (!email || !emailInput.checkValidity()) { showError(errorBox, 'Escribe un correo electrónico válido.'); return; }
+    if (password && (password.length < 12 || new TextEncoder().encode(password).length > 72)) {
+      showError(errorBox, 'La contraseña debe tener al menos 12 caracteres y no superar 72 bytes.'); return;
+    }
+    if (email === account.correo.toLowerCase() && !password) { closeDialog(); return; }
+    pendingPayload = {action: 'credentials', id: account.id,
+      ...(email !== account.correo.toLowerCase() ? {email} : {}),
+      ...(password ? {password} : {})};
+    dialog.querySelector('#hmCredSummary').textContent = 'Cuenta: ' + account.correo + (email !== account.correo.toLowerCase() ? ' · Nuevo correo: ' + email : '') + (password ? ' · Se actualizará la contraseña.' : '');
+    form.hidden = true;
+    confirmation.hidden = false;
+    dialog.querySelector('#hmCredTitle').textContent = 'Confirmar credenciales';
+    dialog.querySelector('#hmCredConfirmSave').focus();
+  };
+  dialog.querySelector('#hmCredBack').onclick = () => {
+    confirmation.hidden = true;
+    confirmError.hidden = true;
+    form.hidden = false;
+    dialog.querySelector('#hmCredTitle').textContent = 'Editar credenciales Admin';
+  };
+  dialog.querySelector('#hmCredConfirmSave').onclick = async () => {
+    if (!pendingPayload) return;
+    const save = dialog.querySelector('#hmCredConfirmSave');
+    const back = dialog.querySelector('#hmCredBack');
+    confirmError.hidden = true;
+    save.disabled = true; back.disabled = true;
+    save.textContent = 'Guardando…';
     try {
-      await manageAdminAccount({action: 'credentials', id: account.id, ...(email !== account.correo.toLowerCase() ? {email} : {}), ...(password ? {password} : {})});
-      dialog.close(); await loadAccounts();
+      await manageAdminAccount(pendingPayload);
+      closeDialog();
+      await loadAccounts();
       $('accountListStatus').textContent = 'Credenciales actualizadas. Si cambiaste tus propias credenciales, vuelve a iniciar sesión.';
-    } catch (error) { await portalAlert(error.message); }
-    finally { save.disabled = false; }
+    } catch (error) {
+      showError(confirmError, error.message || 'No se pudieron actualizar las credenciales.');
+    } finally {
+      save.disabled = false; back.disabled = false;
+      save.textContent = 'Sí, confirmar';
+    }
   };
   document.body.append(dialog);
-  dialog.addEventListener('close', () => dialog.remove(), {once:true});
+  dialog.addEventListener('close', () => dialog.remove(), {once: true});
   dialog.showModal();
 }
 
